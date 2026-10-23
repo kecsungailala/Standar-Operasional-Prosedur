@@ -1,5 +1,5 @@
 /* Service worker SOP-AP Sungai Lala — supaya aplikasi tetap jalan tanpa internet */
-const CACHE = 'sop-ap-sl-v3';
+const CACHE = 'sop-ap-sl-v4';
 const FILES = ['./', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png', './icons/favicon-32.png'];

@@ -590,9 +590,10 @@ function flowPageHTML(sop,p,idxs,nPages,opt={}){
  <div class="flowwrap"><table class="ft"><colgroup><col style="width:7mm"><col style="width:52mm">${cols.map(()=>'<col>').join('')}<col style="width:25mm"><col style="width:16mm"><col style="width:25mm"><col style="width:25mm"></colgroup>
  <thead><tr><th rowspan="2">No</th><th rowspan="2">Kegiatan</th><th colspan="${cols.length}">Pelaksana</th><th colspan="3">Mutu Baku</th><th rowspan="2">Ket</th></tr>
  <tr>${lanes}<th>Kelengkapan</th><th>Waktu</th><th>Output</th></tr></thead><tbody>${rows}</tbody></table><svg class="links"></svg></div>
- <div class="pg-foot">${legend}<span>${esc(DB.settings.instansi)} · Halaman ${p+1} dari ${nPages}</span></div></div>`}
+ <div class="pg-foot">${legend}<span>${pgLabel((opt.off||0)+p+1,opt.total||nPages)}</span></div></div>`}
+const pgLabel=(n,t)=>`SOP-${esc(DB.settings.instansi)} · Halaman ${n} dari ${t}`;
 
-function identHTML(sop){const m=sop.meta,st=DB.settings;
+function identHTML(sop,pg){const m=sop.meta,st=DB.settings;
  const ol=t=>{const a=lines(t);return a.length?`<ol>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:'<p>-</p>'};
  const pr=t=>{const a=lines(t);return a.length?a.map(x=>`<p>${esc(x)}</p>`).join(''):'<p>-</p>'};
  return`<div class="sheet ident"><div class="id-title">LEMBAR IDENTITAS SOP</div><div class="id-sub">${esc(m.judul||'(Judul SOP)')}</div>
@@ -603,7 +604,7 @@ function identHTML(sop){const m=sop.meta,st=DB.settings;
  <tr><td>Judul SOP</td><td>${esc(m.judul)}</td></tr></table>
  <table class="idt2"><tr><td><h4>DASAR HUKUM</h4>${ol(m.dasarHukum)}</td><td><h4>KUALIFIKASI PELAKSANA</h4>${ol(m.kualifikasi)}</td></tr>
  <tr><td><h4>KETERKAITAN</h4>${ol(m.keterkaitan)}</td><td><h4>PERALATAN/PERLENGKAPAN</h4>${ol(m.peralatan)}</td></tr>
- <tr><td><h4>PERINGATAN</h4>${pr(m.peringatan)}</td><td><h4>PENCATATAN DAN PENDATAAN</h4>${pr(m.pencatatan)}</td></tr></table></div>`}
+ <tr><td><h4>PERINGATAN</h4>${pr(m.peringatan)}</td><td><h4>PENCATATAN DAN PENDATAAN</h4>${pr(m.pencatatan)}</td></tr></table>${pg?`<div class="pg-foot"><span></span><span>${pgLabel(pg[0],pg[1])}</span></div>`:''}</div>`}
 
 function paginate(sop,per){const n=sop.steps.length,all=[...Array(n).keys()];if(!n)return[[]];
  if(per>0){const r=[];for(let i=0;i<n;i+=per)r.push(all.slice(i,i+per));return r}
@@ -615,8 +616,11 @@ function paginate(sop,per){const n=sop.steps.length,all=[...Array(n).keys()];if(
  if(cur.length)pages.push(cur);return pages}
 
 function renderDoc(el,sop,o){let h='';const frame=o.frame;const wrap=x=>frame?`<div class="frame">${x}</div>`:x;
- if(o.ident)h+=wrap(identHTML(sop));
- if(o.alir){const pg=paginate(sop,o.per||0);pg.forEach((ix,p)=>h+=wrap(flowPageHTML(sop,p,ix,pg.length,{legend:o.legend})))}
+ /* nomor halaman mengikuti dokumen yang akan dicetak (identitas + bagan alir) */
+ const incI=o.numIdent??!!o.ident,incA=o.numAlir??!!o.alir;
+ const pg=(o.alir||incA)?paginate(sop,o.per||0):[],off=incI?1:0,total=Math.max(1,off+(incA?pg.length:0));
+ if(o.ident)h+=wrap(identHTML(sop,[1,total]));
+ if(o.alir)pg.forEach((ix,p)=>h+=wrap(flowPageHTML(sop,p,ix,pg.length,{legend:o.legend,off,total})))
  el.innerHTML=h;drawLinks(el,sop)}
 
 function drawLinks(root,sop){const S=sop.steps;
@@ -698,8 +702,8 @@ function moveStep(id,d){const S=getSop().steps,i=S.findIndex(x=>x.id===id),j=i+d
 
 function schedulePreview(now){clearTimeout(pvT);pvT=setTimeout(renderPreview,now?0:200)}
 function renderPreview(){const s=getSop();if(!s)return;const per=+$('#pPer').value;
- if(tab==='alir')renderDoc($('#pvAlir'),s,{alir:true,frame:true,per,legend:$('#pLegend').checked});
- if(tab==='ident')renderDoc($('#pvIdent'),s,{ident:true,frame:true});
+ if(tab==='alir')renderDoc($('#pvAlir'),s,{alir:true,frame:true,per,legend:$('#pLegend').checked,numIdent:$('#pIdent').checked,numAlir:true});
+ if(tab==='ident')renderDoc($('#pvIdent'),s,{ident:true,frame:true,per,numIdent:true,numAlir:$('#pAlir').checked});
  if(tab==='cetak')renderDoc($('#pvCetak'),s,{ident:$('#pIdent').checked,alir:$('#pAlir').checked,frame:true,per,legend:$('#pLegend').checked})}
 function setTab(t){tab=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));['alir','ident','cetak'].forEach(x=>$('#tab-'+x).classList.toggle('hidden',x!==t));schedulePreview(true)}
 
