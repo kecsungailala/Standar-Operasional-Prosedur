@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOP-AP Kecamatan Sungai Lala</title>
+<meta name="description" content="Registri & Generator SOP Administrasi Pemerintahan Kecamatan Sungai Lala — bekerja offline">
+<meta name="theme-color" content="#0b5d8f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOP-AP">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{--teal:#0b5d8f;--teal2:#1683c4;--teal3:#e4f3fc;--teal4:#c7e6f8;--gold:#ec4899;--gold2:#fde7f1;--pink:#f472b6;--pink2:#fbcfe8;--ink:#16263a;--mut:#5b6b7f;--line:#dbe6f0;--bg:#f4f8fc;--red:#be123c;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* ===== HERO ===== */
+.hero{position:relative;color:#fff;background:
+ radial-gradient(900px 420px at 92% 110%,rgba(244,114,182,.45),transparent 62%),
+ radial-gradient(600px 300px at 70% -30%,rgba(251,207,232,.25),transparent 60%),
+ radial-gradient(700px 300px at 5% -20%,rgba(255,255,255,.14),transparent 60%),
+ linear-gradient(135deg,#083f66 0%,#0b5d8f 40%,#1f8fd1 75%,#5cc0ef 100%);overflow:hidden}
+.hero::before{content:"";position:absolute;right:-60px;top:-40px;width:420px;height:420px;opacity:.13;pointer-events:none;background:var(--emblem) center/contain no-repeat}
+.hero::after{content:"";position:absolute;inset:0;opacity:.07;pointer-events:none;background-image:
+ radial-gradient(circle,#fff 1px,transparent 1.4px);background-size:22px 22px}
+.hero .in{position:relative;z-index:1;max-width:1280px;margin:auto;padding:22px 24px 30px}
+.topbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px;flex:1;min-width:260px}
+.brandlogo{width:78px;height:78px;flex-shrink:0;background:radial-gradient(circle at 50% 35%,#fff,#e0f2fe 65%,#fce7f3);border-radius:22px;padding:2px;box-shadow:0 6px 18px rgba(8,63,102,.4),0 0 0 2px rgba(251,207,232,.75)}
+.brandlogo svg{width:100%;height:100%;display:block;overflow:visible}
+.brand .cr{font-size:12px;color:#fbcfe8;letter-spacing:.3px;margin-top:2px}
+.ftlogo{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ftlogo .lg{width:150px}
+.ftlogo .lg svg{width:100%;display:block}
+#splash{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(900px 500px at 50% 40%,#ffffff,#e0f2fe 55%,#fce7f3);transition:opacity .6s,visibility .6s;cursor:pointer}
+#splash .lg{width:min(300px,70vw)}
+#splash .lg svg{width:100%;display:block}
+#splash .ld{width:160px;height:4px;border-radius:4px;background:#dbeafe;overflow:hidden}
+#splash .ld i{display:block;height:100%;width:40%;border-radius:4px;background:linear-gradient(90deg,#38bdf8,#ec4899);animation:ldmv 1.1s ease-in-out infinite}
+@keyframes ldmv{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+#splash.out{opacity:0;visibility:hidden}
+.brand .t1{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:700;letter-spacing:.3px;background:linear-gradient(90deg,#fff 0%,#fbcfe8 60%,#f9a8d4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .t2{font-style:italic;opacity:.95}
+.brand .t3{font-size:13px;color:#d6efff}
+.chip-off{font-size:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:5px 10px;border-radius:99px}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:42px;margin:34px 0 6px;line-height:1.1}
+.hero .sub{opacity:.92}
+.hero .status{margin-top:6px;font-size:14px;color:#ffd9ec}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;padding:9px 15px;border-radius:9px;font-weight:600;transition:.15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.btn.ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff;backdrop-filter:blur(4px)}
+.btn.ghost:hover{background:rgba(255,255,255,.18)}
+.btn.gold{background:linear-gradient(135deg,#f472b6,#db2777);border-color:#db2777;color:#fff;box-shadow:0 4px 14px rgba(219,39,119,.35)}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.danger{color:var(--red)}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:7px}
+.btn svg{width:16px;height:16px}
+.hint{font-size:13px;opacity:.85;margin-top:12px}
+
+/* ===== LAYOUT ===== */
+main{max-width:1280px;margin:auto;padding:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.sec-t{font-weight:700;color:var(--teal);font-size:17px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:"";width:4px;height:18px;border-radius:4px;background:linear-gradient(#38bdf8,#ec4899)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}.hero h1{font-size:32px}}
+label.f{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+.inp{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:#fff;outline:none}
+.inp:focus{border-color:var(--teal2);box-shadow:0 0 0 3px rgba(22,131,196,.18)}
+textarea.inp{resize:vertical;min-height:70px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.row2,.row3{grid-template-columns:1fr}}
+.muted{color:var(--mut);font-size:13px}
+
+/* tabs */
+.tabs{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:5px;gap:4px;margin-bottom:18px;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;padding:9px 18px;border-radius:8px;font-weight:600;color:var(--mut)}
+.tabs button.on{background:linear-gradient(135deg,#0b5d8f,#1f8fd1);color:#fff;box-shadow:0 3px 10px rgba(11,93,143,.25)}
+
+/* chips pelaksana */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#0b5d8f,#1683c4);color:#fff;border-radius:99px;padding:5px 6px 5px 13px;font-weight:600;font-size:14px}
+.chip button{border:0;background:rgba(255,255,255,.15);color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;line-height:1;padding:0}
+.chip button:hover{background:rgba(255,255,255,.3)}
+.addrow{display:flex;gap:8px;background:var(--bg);padding:10px;border-radius:10px}
+.qchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.qchips span{font-size:12px;background:var(--teal3);color:var(--teal);padding:4px 9px;border-radius:99px;cursor:pointer}
+.qchips span:hover{background:var(--teal4)}
+
+/* steps */
+.steps{display:flex;flex-direction:column;gap:10px;max-height:720px;overflow:auto;padding-right:4px}
+.step{border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:12px 14px;background:#fff;display:flex;gap:10px;align-items:flex-start}
+.step.keputusan{border-left-color:var(--gold)}
+.step.mulai,.step.selesai{border-left-color:#083f66}
+.step.dokumen{border-left-color:#7c5cc4}
+.step.editing{outline:2px solid var(--gold)}
+.step.dragover{border-top:3px solid var(--gold)}
+.step .bd{flex:1;min-width:0}
+.step .hd{font-size:13px;font-weight:700;color:var(--mut)}
+.step .kg{margin:3px 0;font-size:15px}
+.step .pl{font-size:13px;color:var(--mut)}
+.step .ops{display:flex;gap:4px;flex-shrink:0}
+.step .ops button{border:0;background:var(--bg);width:30px;height:30px;border-radius:7px;font-size:13px}
+.step .ops button:hover{background:var(--teal3)}
+.step .grip{cursor:grab;color:#9aa;padding-top:2px;user-select:none}
+.empty{text-align:center;color:var(--mut);padding:28px;border:2px dashed var(--line);border-radius:12px}
+.valid{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:14px}
+.valid.ok{background:#e9f7ef;color:#17633a}
+.valid.warn{background:#fff6e5;color:#7a4a00}
+.valid ul{margin:6px 0 0 18px;padding:0}
+
+/* home */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.toolbar .inp{max-width:320px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat{border-top:3px solid transparent;border-image:linear-gradient(90deg,#38bdf8,#ec4899) 1;border-top-width:3px}
+.stat b{display:block;font-size:26px;color:var(--teal);font-family:Georgia,serif}
+.stat span{font-size:13px;color:var(--mut)}
+.sopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.sopc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;transition:.15s;position:relative;overflow:hidden}
+.sopc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(#38bdf8,#ec4899)}
+.sopc:hover{box-shadow:0 6px 18px rgba(11,93,143,.14);transform:translateY(-2px)}
+.sopc .no{font-size:12px;color:var(--mut);font-family:Consolas,monospace}
+.sopc .jd{font-weight:700;font-size:16px;cursor:pointer}
+.sopc .jd:hover{color:var(--teal2)}
+.sopc .tg{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--teal3);color:var(--teal)}
+.tag.g{background:var(--gold2);color:#9d174d}
+.sopc .ft{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.help{margin-top:22px}
+.help summary{cursor:pointer;font-weight:700;color:var(--teal)}
+.help ol{margin:10px 0 0 18px;line-height:1.7}
+
+/* preview */
+.pvwrap{margin-top:24px}
+.pvlabel{font-size:13px;color:var(--mut);margin:0 0 8px}
+.pvscroll{overflow:auto;background:#e6f0f8;border-radius:12px;padding:18px}
+.frame{background:#fff;padding:10mm;width:max-content;margin:0 auto 18px;box-shadow:0 2px 14px rgba(0,0,0,.12)}
+.printopts{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.printopts label{display:flex;gap:6px;align-items:center;font-weight:600}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(8,40,66,.55);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
+.modal .box{background:#fff;border-radius:16px;max-width:720px;width:100%;padding:24px}
+.modal h3{margin:0 0 4px;color:var(--teal)}
+.logoprev{display:flex;align-items:center;gap:14px;margin-top:6px}
+.logoprev img{width:64px;height:64px;object-fit:contain;border:1px solid var(--line);border-radius:10px;padding:4px}
+
+.toast{position:fixed;right:20px;bottom:20px;background:var(--teal);color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.2);z-index:99;transition:.25s;opacity:0;transform:translateY(10px);pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.toast.err{background:var(--red)}
+footer.ft{background:linear-gradient(90deg,#083f66,#0b5d8f 60%,#be4b8a);color:#e3f3fc;text-align:center;padding:18px;font-size:13px;margin-top:30px}
+
+/* ===== SHEET (dokumen cetak) ===== */
+.sheet{width:277mm;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;font-size:10.5px;line-height:1.35}
+.sheet table{border-collapse:collapse;width:100%}
+.pg-head{text-align:center;margin-bottom:8px}
+.pg-title{font-weight:700;font-size:15px;letter-spacing:.3px}
+.pg-sub{font-size:11px;margin-top:2px}
+.flowwrap{position:relative}
+.flowwrap svg.links{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+table.ft{table-layout:fixed}
+table.ft th,table.ft td{border:1px solid #333;padding:4px 5px}
+table.ft th{background:#e8f4fc;font-weight:700;text-align:center;font-size:10px}
+table.ft td.c-no{text-align:center}
+table.ft td.c-keg{font-size:11px}
+table.ft td.lane{text-align:center;vertical-align:middle;height:58px;padding:2px}
+table.ft td.c-mb,table.ft td.c-ket{text-align:center;font-size:10px}
+table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dashed}
+.shp,.off{display:inline-block;line-height:0;vertical-align:middle}
+.pg-foot{display:flex;justify-content:space-between;font-size:9px;color:#555;margin-top:5px}
+.legend{display:flex;gap:14px;align-items:center}
+.legend span{display:inline-flex;gap:4px;align-items:center}
+
+.ident .id-title{text-align:center;font-weight:700;font-size:15px}
+.ident .id-sub{text-align:center;font-size:11px;margin:2px 0 10px}
+.idt td,.idt2 td{border:1px solid #333;padding:4px 7px;vertical-align:top}
+.idt .id-logo{text-align:center;vertical-align:middle}
+.idt .id-logo img{width:60px;height:60px;object-fit:contain;display:block;margin:0 auto 8px}
+.idt .id-logo .b{font-weight:700;font-size:11.5px;margin-top:3px}
+.idt .ttd .sp{height:38px}
+.idt .ttd .nm{font-weight:700;text-decoration:underline}
+.idt2{margin-top:-1px}
+.idt2 td{width:50%;padding:7px 9px}
+.idt2 h4{margin:0 0 5px;font-size:11px}
+.idt2 ol{margin:0;padding-left:18px}
+.idt2 p{margin:0 0 3px}
+
+#printArea{position:absolute;left:-99999px;top:0}
+#measure{position:absolute;left:-99999px;top:0;visibility:hidden}
+
+@page{size:A4 landscape;margin:0}
+@media print{
+ html,body{background:#fff;margin:0;padding:0}
+ body>*:not(#printArea){display:none!important}
+ #printArea{position:static;left:0}
+ .sheet{box-sizing:border-box;width:297mm;padding:10mm;page-break-after:always;break-after:page}
+ .sheet:last-child{page-break-after:auto;break-after:auto}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+ <div class="in">
+  <div class="topbar">
+   <div class="brand">
+    <div id="brandLogo" class="brandlogo" title="SOP-AP Sungai Lala"></div>
+    <div>
+     <div class="t1">SOP-AP Sungai Lala</div>
+     <div class="t2">Registri &amp; Generator Standar Operasional Prosedur</div>
+     <div class="t3" id="brandInst">Kecamatan Sungai Lala · Kabupaten Indragiri Hulu</div>
+     <div class="cr">©2026 Varhamxiank.com</div>
+    </div>
+   </div>
+   <span class="chip-off">● Mode Offline · data di perangkat ini</span>
+   <button class="btn gold hidden" id="btnInstall">⤓ Instal Aplikasi</button>
+   <button class="btn ghost" id="btnSettings">⚙ Pengaturan</button>
+  </div>
+
+  <div id="heroHome">
+   <h1>Registri SOP Kecamatan</h1>
+   <div class="sub">Kelola seluruh SOP Administrasi Pemerintahan Kecamatan Sungai Lala — buat, ubah, cetak, dan arsipkan dalam satu tempat.</div>
+   <div class="actions">
+    <button class="btn gold" id="btnNew">＋ SOP Baru</button>
+    <button class="btn ghost" id="btnOpen" title="Bisa pilih banyak file sekaligus: CSV dari Portal SOP / SOP-AP, file .sop.json, atau file Backup">📂 Buka / Impor File (.csv / .json)</button>
+    <button class="btn ghost" id="btnBackup">💾 Backup Semua</button>
+    <button class="btn ghost" id="btnRegCsv">📊 Ekspor Daftar SOP (Excel/CSV)</button>
+   </div>
+  </div>
+
+  <div id="heroEditor" class="hidden">
+   <h1>Generator SOP-AP</h1>
+   <div class="sub" id="heroJudul"></div>
+   <div class="status" id="saveStatus">Draft tersimpan otomatis di browser ini</div>
+   <div class="actions">
+    <button class="btn ghost" id="btnBack">← Daftar SOP</button>
+    <button class="btn ghost" id="btnSaveFile">⬇ Simpan File (.sop.json)</button>
+    <button class="btn ghost" id="btnSaveCsv">⬇ Simpan CSV (format Portal SOP)</button>
+    <button class="btn ghost" id="btnDup">⧉ Duplikat</button>
+    <button class="btn gold" id="btnPrint">🖨 Cetak / Simpan PDF</button>
+   </div>
+   <div class="hint">Kertas cetak: <b>A4 lanskap</b> — bagan otomatis dipecah per halaman dengan konektor segilima penyambung halaman.</div>
+  </div>
+ </div>
+</header>
+
+<!-- ===== HOME ===== -->
+<main id="home">
+ <div class="stats" id="stats"></div>
+ <div class="toolbar">
+  <input class="inp" id="q" placeholder="🔍 Cari judul / nomor SOP…">
+  <select class="inp" id="fSeksi" style="max-width:280px"></select>
+  <span style="flex:1"></span>
+  <button class="btn" id="btnContoh">✨ Tambah Contoh SOP</button>
+ </div>
+ <div class="sopgrid" id="sopGrid"></div>
+ <details class="card help">
+  <summary>Panduan singkat</summary>
+  <ol>
+   <li>Klik <b>SOP Baru</b>. Isi tab <b>Identitas SOP</b> (nomor bisa dibuat otomatis).</li>
+   <li>Di tab <b>Bagan Alir</b>, atur kolom pelaksana lalu tambahkan langkah berurutan: Mulai → Proses/Keputusan/Dokumen → Selesai.</li>
+   <li>Untuk <b>Keputusan</b>, pilih langkah tujuan jika hasilnya "Tidak". Garis konektor digambar otomatis.</li>
+   <li>Semua perubahan tersimpan otomatis di browser. Gunakan <b>Simpan File</b> / <b>Backup Semua</b> untuk menyimpan ke flashdisk atau memindahkan ke komputer lain.</li>
+   <li><b>Cetak / Simpan PDF</b> → pilih printer "Save as PDF / Microsoft Print to PDF", ukuran A4, orientasi lanskap.</li>
+  </ol>
+ </details>
+</main>
+
+<!-- ===== EDITOR ===== -->
+<main id="editor" class="hidden">
+ <div class="tabs" id="tabs">
+  <button data-tab="alir" class="on">Bagan Alir</button>
+  <button data-tab="ident">Identitas SOP</button>
+  <button data-tab="cetak">Pratinjau &amp; Cetak</button>
+ </div>
+
+ <!-- TAB ALIR -->
+ <section id="tab-alir">
+  <div class="card grid2">
+   <div>
+    <div class="sec-t">Kolom Pelaksana</div>
+    <div class="chips" id="pelChips"></div>
+    <div class="addrow">
+     <input class="inp" id="pelNew" placeholder="Nama pelaksana baru… (mis. Camat)">
+     <button class="btn pri" id="pelAdd">＋</button>
+    </div>
+    <div class="muted" style="margin-top:6px">Tips: klik dua kali nama pelaksana untuk mengganti nama. Gunakan ◀ ▶ untuk mengatur urutan kolom.</div>
+
+    <div class="sec-t" style="margin-top:22px" id="formTitle">Tambah Langkah</div>
+    <div class="card" style="background:#fafcfb">
+     <label class="f">Kegiatan</label>
+     <textarea class="inp" id="fKeg" placeholder="Deskripsi kegiatan…"></textarea>
+     <div class="row2">
+      <div><label class="f">Tipe</label>
+       <select class="inp" id="fTipe">
+        <option value="mulai">Mulai</option>
+        <option value="proses">Proses</option>
+        <option value="keputusan">Keputusan</option>
+        <option value="dokumen">Dokumen</option>
+        <option value="selesai">Selesai</option>
+       </select></div>
+      <div><label class="f">Pelaksana</label><select class="inp" id="fPel"></select></div>
+     </div>
+     <div id="tidakWrap" class="hidden">
+      <label class="f">Jika <span style="color:var(--red)">Tidak</span> → kembali ke langkah</label>
+      <select class="inp" id="fTidak"></select>
+     </div>
+     <label class="f">Kelengkapan</label>
+     <input class="inp" id="fKel" list="dlKel" placeholder="mis. Berkas permohonan">
+     <div class="row2">
+      <div><label class="f">Waktu</label>
+       <input class="inp" id="fWaktu" placeholder="mis. 30 Menit">
+       <div class="qchips" id="qWaktu"></div></div>
+      <div><label class="f">Output</label><input class="inp" id="fOut" list="dlKel" placeholder="mis. Draf surat"></div>
+     </div>
+     <label class="f">Keterangan (opsional)</label>
+     <input class="inp" id="fKet">
+     <div id="posWrap"><label class="f">Posisi</label><select class="inp" id="fPos"></select></div>
+     <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn pri" style="flex:1;justify-content:center" id="btnStepSave">Tambah Langkah</button>
+      <button class="btn hidden" id="btnStepCancel">Batal</button>
+     </div>
+     <datalist id="dlKel"></datalist>
+    </div>
+   </div>
+   <div>
+    <div class="sec-t">Urutan Langkah <span class="muted" id="stepCount"></span></div>
+    <div class="steps" id="stepList"></div>
+    <div id="validBox"></div>
+   </div>
+  </div>
+  <div class="pvwrap">
+   <div class="pvlabel">Pratinjau bagan alir — garis konektor digambar otomatis sesuai posisi kolom pelaksana</div>
+   <div class="pvscroll" id="pvAlir"></div>
+  </div>
+ </section>
+
+ <!-- TAB IDENTITAS -->
+ <section id="tab-ident" class="hidden">
+  <div class="card">
+   <div class="sec-t">Identitas SOP</div>
+   <label class="f">Judul SOP</label>
+   <input class="inp" data-m="judul" placeholder="mis. Pelayanan Surat Keterangan …">
+   <div class="row2">
+    <div><label class="f">Unit / Seksi</label><select class="inp" data-m="unit" id="mUnit"></select></div>
+    <div><label class="f">Nomor SOP</label>
+     <div style="display:flex;gap:8px"><input class="inp" data-m="nomor"><button class="btn" id="btnAutoNo" title="Buat nomor otomatis">⚡ Otomatis</button></div></div>
+   </div>
+   <div class="row3">
+    <div><label class="f">Tanggal Pembuatan</label><input type="date" class="inp" data-m="tglBuat"></div>
+    <div><label class="f">Tanggal Revisi</label><input type="date" class="inp" data-m="tglRevisi"></div>
+    <div><label class="f">Tanggal Efektif</label><input type="date" class="inp" data-m="tglEfektif"></div>
+   </div>
+   <div class="row3">
+    <div><label class="f">Disahkan oleh (jabatan)</label><input class="inp" data-m="jabatan"></div>
+    <div><label class="f">Nama Pejabat</label><input class="inp" data-m="nama"></div>
+    <div><label class="f">NIP</label><input class="inp" data-m="nip"></div>
+   </div>
+   <div class="muted" style="margin-top:14px">Isian daftar di bawah: <b>satu baris = satu butir</b> (otomatis bernomor saat dicetak).</div>
+   <div class="grid2" style="gap:14px">
+    <div><label class="f">Dasar Hukum</label><textarea class="inp" data-m="dasarHukum" rows="8"></textarea></div>
+    <div><label class="f">Kualifikasi Pelaksana</label><textarea class="inp" data-m="kualifikasi" rows="8"></textarea></div>
+    <div><label class="f">Keterkaitan</label><textarea class="inp" data-m="keterkaitan" rows="4"></textarea></div>
+    <div><label class="f">Peralatan / Perlengkapan</label><textarea class="inp" data-m="peralatan" rows="4"></textarea></div>
+    <div><label class="f">Peringatan</label><textarea class="inp" data-m="peringatan" rows="3"></textarea></div>
+    <div><label class="f">Pencatatan dan Pendataan</label><textarea class="inp" data-m="pencatatan" rows="3"></textarea></div>
+   </div>
+  </div>
+  <div class="pvwrap">
+   <div class="pvlabel">Pratinjau lembar identitas SOP</div>
+   <div class="pvscroll" id="pvIdent"></div>
+  </div>
+ </section>
+
+ <!-- TAB CETAK -->
+ <section id="tab-cetak" class="hidden">
+  <div class="card">
+   <div class="sec-t">Pengaturan Cetak</div>
+   <div class="printopts">
+    <label><input type="checkbox" id="pIdent" checked> Lembar Identitas</label>
+    <label><input type="checkbox" id="pAlir" checked> Bagan Alir</label>
+    <label>Langkah per halaman
+     <select class="inp" id="pPer" style="width:auto;padding:6px 10px">
+      <option value="0">Otomatis</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>10</option><option>12</option>
+     </select></label>
+    <label><input type="checkbox" id="pLegend" checked> Tampilkan keterangan simbol</label>
+    <button class="btn gold" id="btnPrint2">🖨 Cetak / Simpan PDF</button>
+   </div>
+   <div class="muted" style="margin-top:8px">Di jendela cetak pilih <b>Save as PDF</b>, kertas <b>A4</b>, orientasi <b>Lanskap</b>, margin <b>Default/None</b>, skala 100%, dan aktifkan <b>Background graphics</b>. Tanggal, judul &amp; alamat file browser otomatis tidak ikut tercetak (jika masih muncul, hilangkan centang <b>Headers and footers</b>).</div>
+  </div>
+  <div class="pvwrap"><div class="pvscroll" id="pvCetak"></div></div>
+ </section>
+</main>
+
+<footer class="ft"><div class="ftlogo"><div class="lg" id="ftLogo"></div><div>SOP-AP Offline · Kabupaten Indragiri Hulu</div></div></footer>
+<div id="splash"><div class="lg" id="spLogo"></div><div class="ld"><i></i></div></div>
+
+<!-- MODAL PENGATURAN -->
+<div class="modal hidden" id="mSet">
+ <div class="box">
+  <h3>Pengaturan Instansi</h3>
+  <div class="muted">Dipakai sebagai nilai awal setiap SOP baru dan pada lembar cetak.</div>
+  <div class="row2">
+   <div><label class="f">Nama Instansi</label><input class="inp" id="sInst"></div>
+   <div><label class="f">Kabupaten</label><input class="inp" id="sKab"></div>
+  </div>
+  <div class="row3">
+   <div><label class="f">Jabatan Pengesah</label><input class="inp" id="sJab"></div>
+   <div><label class="f">Nama Pejabat</label><input class="inp" id="sNama"></div>
+   <div><label class="f">NIP</label><input class="inp" id="sNip"></div>
+  </div>
+  <div class="row2">
+   <div><label class="f">Kode Klasifikasi Nomor</label><input class="inp" id="sKlas"></div>
+   <div><label class="f">Kode Instansi pada Nomor</label><input class="inp" id="sKode"></div>
+  </div>
+  <label class="f">Daftar Unit / Seksi (satu per baris)</label>
+  <textarea class="inp" id="sSeksi" rows="6"></textarea>
+  <label class="f">Logo (untuk kop &amp; lembar identitas)</label>
+  <div class="logoprev"><img id="sLogoPrev" alt=""><button class="btn" id="sLogoBtn">Ganti Logo…</button><button class="btn danger" id="sLogoDel">Pakai logo bawaan</button></div>
+  <input type="file" id="sLogoFile" accept="image/*" class="hidden">
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+   <button class="btn" id="sCancel">Batal</button>
+   <button class="btn pri" id="sSave">Simpan Pengaturan</button>
+  </div>
+ </div>
+</div>
+
+<input type="file" id="fileOpen" accept=".json,.sop,.csv,application/json,text/csv" multiple class="hidden">
+<div class="toast" id="toast"></div>
+<div id="measure"></div>
+<div id="printArea"></div>
+
+<script>
+/* ================== DATA & UTIL ================== */
+const KEY='sopSL_v1';
+const BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const MM=96/25.4;
+/* ===== LOGO SOP-AP (hidup / bergerak) ===== */
+function logoSVG(k,o){o=Object.assign({anim:true,caption:false,bg:false,light:false},o||{});
+ const H=o.caption?292:240,c1=o.light?'#ffffff':'#0b5d8f',c2=o.light?'#fbcfe8':'#db2777';
+ const mir=d=>d.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g,(m,x,y)=>x+' '+(240-y));
+ const petalC='M120 30 C137 48 140 66 120 92 C100 66 103 48 120 30Z',petalL='M120 92 C106 74 88 68 78 71 C85 86 101 93 120 92Z',petalR='M120 92 C134 74 152 68 162 71 C155 86 139 93 120 92Z';
+ const star=(x,y,s,d)=>`<path class="${k}-star" style="animation-delay:${d}s" d="M${x} ${y-s} Q${x} ${y} ${x+s} ${y} Q${x} ${y} ${x} ${y+s} Q${x} ${y} ${x-s} ${y} Q${x} ${y} ${x} ${y-s}Z" fill="#fff"/>`;
+ const css=o.anim?`<style>
+ .${k}-float{animation:${k}F 4.6s ease-in-out infinite}
+ .${k}-spin{transform-origin:120px 120px;animation:${k}S 26s linear infinite}
+ .${k}-spinr{transform-origin:120px 120px;animation:${k}S 40s linear infinite reverse}
+ .${k}-pt{transform-box:fill-box;transform-origin:50% 100%;animation:${k}B 3.4s ease-in-out infinite}
+ .${k}-pb{transform-box:fill-box;transform-origin:50% 0%;animation:${k}B 3.4s ease-in-out infinite}
+ .${k}-ps{animation:${k}W 3.4s ease-in-out infinite}
+ .${k}-ring{animation:${k}R 3.4s ease-in-out infinite}
+ .${k}-glow{transform-origin:120px 120px;animation:${k}G 3.4s ease-in-out infinite}
+ .${k}-star{transform-box:fill-box;transform-origin:center;animation:${k}T 2.6s ease-in-out infinite}
+ @keyframes ${k}F{50%{transform:translateY(-4px)}}
+ @keyframes ${k}S{to{transform:rotate(360deg)}}
+ @keyframes ${k}B{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+ @keyframes ${k}W{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+ @keyframes ${k}R{0%,100%{stroke-width:4.5}50%{stroke-width:6}}
+ @keyframes ${k}G{0%,100%{transform:scale(.92);opacity:.55}50%{transform:scale(1.08);opacity:.95}}
+ @keyframes ${k}T{0%,100%{transform:scale(.2);opacity:0}45%,55%{transform:scale(1);opacity:1}}
+ @media (prefers-reduced-motion:reduce){[class^="${k}-"]{animation:none!important}}
+ </style>`:'';
+ const lotus=(f,cls,cls2)=>`<g class="${cls}"><path d="${f(petalC)}" fill="url(#${k}pk)"/></g><g class="${cls2}" style="transform-origin:120px ${f===mir?148:92}px"><path d="${f(petalL)}" fill="#f472b6"/></g><g class="${cls2}" style="transform-origin:120px ${f===mir?148:92}px;animation-direction:reverse"><path d="${f(petalR)}" fill="#f472b6"/></g><path d="${f('M120 36 L120 86')}" stroke="#fff" stroke-width="2" opacity=".75"/>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 ${H}" role="img" aria-label="Logo SOP-AP">${css}
+<defs>
+ <linearGradient id="${k}sk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset=".5" stop-color="#0ea5e9"/><stop offset="1" stop-color="#075985"/></linearGradient>
+ <linearGradient id="${k}rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset=".5" stop-color="#f9a8d4"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+ <linearGradient id="${k}pk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbcfe8"/><stop offset=".55" stop-color="#f472b6"/><stop offset="1" stop-color="#be185d"/></linearGradient>
+ <linearGradient id="${k}tx" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#be185d"/><stop offset=".42" stop-color="#ec4899"/><stop offset=".5" stop-color="#ffe4f1"/><stop offset=".58" stop-color="#ec4899"/><stop offset="1" stop-color="#be185d"/>${o.anim?'<animateTransform attributeName="gradientTransform" type="translate" values="-1 0;1 0;1 0" keyTimes="0;.6;1" dur="3.6s" repeatCount="indefinite"/>':''}</linearGradient>
+ <radialGradient id="${k}gl"><stop offset="0" stop-color="#f9a8d4" stop-opacity=".9"/><stop offset=".6" stop-color="#7dd3fc" stop-opacity=".35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>
+ <radialGradient id="${k}bg" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#e0f2fe"/><stop offset="1" stop-color="#fce7f3"/></radialGradient>
+</defs>
+${o.bg?`<rect width="240" height="${H}" rx="54" fill="url(#${k}bg)"/>`:''}
+<g class="${k}-float">
+ <circle class="${k}-glow" cx="120" cy="120" r="70" fill="url(#${k}gl)"/>
+ <g class="${k}-spin"><circle cx="120" cy="120" r="112" fill="none" stroke="url(#${k}rg)" stroke-width="3" stroke-dasharray="46 10 4 10" stroke-linecap="round"/></g>
+ <g class="${k}-spinr"><circle cx="120" cy="120" r="103" fill="none" stroke="url(#${k}sk)" stroke-width="1.4" stroke-dasharray="1 7" stroke-linecap="round"/>
+  <circle cx="120" cy="17" r="3.5" fill="#f472b6"/><circle cx="120" cy="223" r="3.5" fill="#38bdf8"/></g>
+ <g class="${k}-ring" fill="none" stroke="url(#${k}sk)" stroke-width="4.5">
+  <circle cx="120" cy="62" r="32"/><circle cx="88" cy="74" r="22"/><circle cx="152" cy="74" r="22"/>
+  <circle cx="120" cy="178" r="32"/><circle cx="88" cy="166" r="22"/><circle cx="152" cy="166" r="22"/>
+ </g>
+ <g fill="none" stroke="url(#${k}sk)" stroke-width="3.5" stroke-linecap="round">
+  <path d="M44 120 Q30 120 22 108 M196 120 Q210 120 218 108 M44 120 Q30 120 22 132 M196 120 Q210 120 218 132"/>
+ </g>
+ ${lotus(x=>x,k+'-pt',k+'-ps')}
+ ${lotus(mir,k+'-pb',k+'-ps')}
+ <text x="120" y="134" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="42" letter-spacing="-.5" fill="url(#${k}tx)" stroke="#fff" stroke-width="7" stroke-linejoin="round" paint-order="stroke">SOP-AP</text>
+ ${star(52,48,7,0)}${star(190,56,5,.9)}${star(196,186,6,1.6)}${star(46,192,5,.5)}${star(120,8,4,1.2)}
+</g>
+${o.caption?`<text x="120" y="262" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="15" letter-spacing="1.6" fill="${c1}">KECAMATAN SUNGAI LALA</text>
+<path d="M58 270 H182" stroke="url(#${k}rg)" stroke-width="1.4"/>
+<text x="120" y="285" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="11.5" letter-spacing=".6" fill="${c2}">©2026 Varhamxiank.com</text>`:''}
+</svg>`}
+const svgURI=s=>'data:image/svg+xml;utf8,'+encodeURIComponent(s);
+const APP_EMBLEM=svgURI(logoSVG('st',{anim:false}));
+const APP_ICON=svgURI(logoSVG('ic',{anim:false,bg:true}));
+
+const DEF_LOGO='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d8a4a"/><stop offset="1" stop-color="#0f5c32"/></linearGradient></defs><path d="M50 4 L94 18 V58 C94 84 72 100 50 106 C28 100 6 84 6 58 V18 Z" fill="url(#g)" stroke="#f4b41a" stroke-width="5"/><path d="M50 26 C60 40 70 46 70 60 A20 20 0 0 1 30 60 C30 46 40 40 50 26Z" fill="#f4b41a"/><path d="M50 40 V82 M50 60 L40 52 M50 68 L60 60" stroke="#0f5c32" stroke-width="3.5" fill="none" stroke-linecap="round"/><text x="50" y="99" text-anchor="middle" font-family="Arial" font-weight="700" font-size="11" fill="#fff">SUNGAI LALA</text></svg>`);
+const DEF_DASAR=[
+ 'Peraturan Menteri Dalam Negeri Nomor 52 Tahun 2011 tentang Standar Operasional Prosedur di Lingkungan Pemerintah Provinsi dan Kabupaten/Kota',
+ 'Peraturan Menteri Pendayagunaan Aparatur Negara dan Reformasi Birokrasi Nomor 35 Tahun 2012 tentang Pedoman Penyusunan Standar Operasional Prosedur Administrasi Pemerintahan',
+ 'Peraturan Pemerintah Nomor 41 Tahun 2007 Tentang Organisasi Perangkat Daerah',
+ 'Peraturan Daerah Kabupaten Indragiri Hulu No 4 Tahun 2016 Tentang Pembentukan dan Susunan Perangkat Daerah Kabupaten',
+ 'Peraturan Pemerintah No.18 Tahun 2016 Tentang Organisasi Perangkat Daerah',
+ 'Peraturan Bupati Indragiri Hulu Nomor 76 Tahun 2016 Tentang Kedudukan',
+ 'Susunan Organisasi, Tugas dan Fungsi Serta Tata Kerja Kecamatan dan Kelurahan Kabupaten Indragiri Hulu'
+].join('\n');
+const DEF_SETTINGS={instansi:'Kecamatan Sungai Lala',kabupaten:'Kabupaten Indragiri Hulu',jabatan:'Camat Sungai Lala',nama:'Zeris Anshory, S.E',nip:'19791217 201102 1 001',klasifikasi:'000.8.3.3',kode:'KecSL',
+ seksi:['Sekretariat','Seksi Pemerintahan','Seksi Ketentraman dan Ketertiban Umum','Seksi Pemberdayaan Masyarakat dan Desa','Seksi Kesejahteraan Sosial','Seksi Pelayanan Umum'],logo:''};
+const WAKTU=['5 Menit','10 Menit','15 Menit','20 Menit','30 Menit','1 Jam','2 Jam','1 Hari'];
+const TIPE={mulai:'Mulai',proses:'Proses',keputusan:'Keputusan',dokumen:'Dokumen',selesai:'Selesai'};
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmtTgl=s=>{if(!s)return '-';const[y,m,d]=s.split('-');return (+d)+' '+BULAN[+m-1]+' '+y};
+const L=i=>String.fromCharCode(65+(i%26))+(i>=26?Math.floor(i/26):'');
+function kodeSeksi(n){n=(n||'').toLowerCase();
+ if(n.includes('sekret'))return'SEKRE';if(n.includes('pemberdaya')||n.includes('pmd'))return'PMD';if(n.includes('pemerintah'))return'PEM';
+ if(n.includes('ketentraman')||n.includes('trantib'))return'TRANTIB';if(n.includes('kesejahtera')||n.includes('kesos'))return'KESOS';
+ if(n.includes('pelayanan'))return'PELUM';return (n.replace(/seksi|bagian|sub/g,'').trim().split(/\s+/).map(w=>w[0]||'').join('')||'X').toUpperCase()}
+
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops))return{sops:d.sops,settings:Object.assign({},DEF_SETTINGS,d.settings||{})}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
+let DB=load(),cur=null,tab='alir',editingId=null,lastSaved=null,saveT,pvT;
+function save(now){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));lastSaved=new Date();updStatus()}catch(e){toast('Gagal menyimpan — penyimpanan browser penuh. Coba ganti logo dengan gambar lebih kecil.',true)}},now?0:250)}
+function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast'+(err?' err':''),2600)}
+function download(name,text,type){const b=new Blob([text],{type:type||'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+const logoSrc=()=>DB.settings.logo||DEF_LOGO;
+const safeName=s=>(s||'SOP').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim().slice(0,80);
+
+function newSop(){const s=DB.settings;return{id:uid(),created:Date.now(),updated:Date.now(),
+ meta:{judul:'',unit:s.seksi[1]||s.seksi[0]||'',nomor:'',tglBuat:today(),tglRevisi:'',tglEfektif:'',jabatan:s.jabatan,nama:s.nama,nip:s.nip,
+  dasarHukum:DEF_DASAR,kualifikasi:'',keterkaitan:'',peralatan:'Komputer dan Printer\nMeja dan Kursi\nATK dan lain – lain',peringatan:'',pencatatan:''},
+ pelaksana:['Pemohon','Staf','Kasi','Camat'],steps:[]}}
+function contohSop(){const s=newSop(),st=(kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket='')=>({id:uid(),kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket,tidakKe:''});
+ Object.assign(s.meta,{judul:'Pembuatan Surat Keterangan Verifikasi SPJ Desa',unit:'Seksi Pemerintahan',nomor:'000.8.3.3/KecSL/SOP-PEM/1',tglBuat:'2026-01-02',tglEfektif:'2026-01-04',
+  kualifikasi:'Pendidikan S.1,S.2\nMemiliki Pengetahuan dan Pemahaman tentang Dana Desa\nMemiliki Kewenangan untuk melaksanakan kegiatan',
+  keterkaitan:'SOP Pelaksanaan Kegiatan Monitoring dan Pembinaan',peralatan:'Sepeda Motor\nKomputer dan Printer\nMeja dan Kursi\nATK dan lain – lain',
+  peringatan:'Apabila SOP Pelaksanaan Kegiatan Verifikasi SPJ Desa tidak dilaksanakan maka akan mengganggu proses pencairan Desa',
+  pencatatan:'SOP Permohonan Pelaksanaan Kegiatan menjadi dasar dalam melaksanakan kegiatan sebagaimana tertuang dalam DPA Kecamatan Sungai Lala'});
+ s.pelaksana=['Desa','Staf','Kasi','Tim Verifikasi'];
+ s.steps=[st('Mengajukan Berkas SPJ','mulai','Desa','Pengajuan berkas','1 Hari','Berkas diterima'),
+  st('Meneliti dan mengagendakan Berkas SPJ','proses','Staf','Berkas diterima','2 Jam','Kelengkapan Berkas','Jika ada kekurangan maka di kembalikan kepemohon'),
+  st('Membuat Surat Keterangan Verifikasi SPJ','proses','Staf','Konsep Surat','20 Menit','Draf Surat'),
+  st('Meneliti dan memverifikasi Surat Keterangan Verifikasi SPJ','keputusan','Kasi','Draf surat','20 Menit','Draf Surat Siap Proses','Jika ada Perbaikan di Kembalikan ke Pembuat Draf Surat'),
+  st('Pengajuan Surat Keterangan Verifikasi SPJ untuk di Tanda Tangan','proses','Staf','Draf Surat Siap Proses','20 Menit','Surat Siap ditanda Tangan'),
+  st('Menandatangani Surat Keterangan Verifikasi SPJ','keputusan','Tim Verifikasi','Surat Siap ditanda Tangan','20 Menit','Surat Verifikasi SPJ'),
+  st('Mengagendakan, Mengarsipkan dan Menyerahkan Surat Keterangan Verifikasi SPJ','selesai','Staf','Surat Permohonan diserahkan','20 Menit','Arsip')];
+ s.steps[3].tidakKe=s.steps[2].id;s.steps[5].tidakKe=s.steps[2].id;return s}
+const getSop=()=>DB.sops.find(x=>x.id===cur);
+function touch(){const s=getSop();if(!s)return;s.updated=Date.now();save();schedulePreview();$('#heroJudul').textContent=s.meta.judul||'(SOP tanpa judul)'}
+function updStatus(){if(!lastSaved)return;const t=lastSaved.toTimeString().slice(0,8).replace(/:/g,'.');$('#saveStatus').textContent='Draft tersimpan otomatis di browser ini — terakhir tersimpan '+t}
+
+/* ================== RENDER DOKUMEN ================== */
+function shapeSVG(t,g){const n=g+1,tx=(x,y,s,c,w)=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Arial" font-size="${s}" font-weight="700" fill="${c}">${w}</text>`;
+ if(t==='mulai'||t==='selesai')return`<svg width="64" height="24" viewBox="0 0 64 24"><rect x="1" y="1" width="62" height="22" rx="11" fill="#0b5d8f"/>${tx(32,16,10,'#fff',t==='mulai'?'Mulai':'Selesai')}</svg>`;
+ if(t==='keputusan')return`<svg width="46" height="46" viewBox="0 0 46 46"><polygon points="23,1 45,23 23,45 1,23" fill="#fde7f1" stroke="#db2777" stroke-width="1.4"/>${tx(23,27,11,'#1d2b2a',n)}</svg>`;
+ if(t==='dokumen')return`<svg width="50" height="30" viewBox="0 0 50 30"><path d="M1 1H49V24Q37 17 25 24T1 24Z" fill="#f1ecfb" stroke="#7c5cc4" stroke-width="1.3"/>${tx(25,17,11,'#1d2b2a',n)}</svg>`;
+ return`<svg width="48" height="24" viewBox="0 0 48 24"><rect x="1" y="1" width="46" height="22" rx="3" fill="#e4f3fc" stroke="#0b5d8f" stroke-width="1.3"/>${tx(24,16,11,'#0b5d8f',n)}</svg>`}
+const pentagon=l=>`<svg width="24" height="24" viewBox="0 0 24 24"><polygon points="1,1 23,1 23,14 12,23 1,14" fill="#fff" stroke="#0b5d8f" stroke-width="1.3"/><text x="12" y="13" text-anchor="middle" font-family="Arial" font-size="10" font-weight="700" fill="#0b5d8f">${l}</text></svg>`;
+
+function flowPageHTML(sop,p,idxs,nPages,opt={}){
+ const S=sop.steps,cols=sop.pelaksana.length?sop.pelaksana:['Pelaksana'],m=sop.meta;
+ const lanes=cols.map((c,i)=>`<th class="${i===cols.length-1?'lane-last':''}">${esc(c)}</th>`).join('');
+ const conn=(g,label,pos)=>`<tr class="conn"><td></td><td style="font-size:9px;color:#555;text-align:center">${pos==='top'?'Lanjutan dari halaman sebelumnya':'Bersambung ke halaman berikutnya'}</td>${cols.map(c=>`<td class="lane">${c===S[g].pelaksana?`<div class="off" data-off="${pos}">${pentagon(label)}</div>`:''}</td>`).join('')}<td></td><td></td><td></td><td></td></tr>`;
+ let rows='';
+ if(!opt.measure&&p>0&&idxs.length)rows+=conn(idxs[0],L(p-1),'top');
+ idxs.forEach(g=>{const s=S[g];rows+=`<tr data-g="${g}"><td class="c-no">${g+1}</td><td class="c-keg">${esc(s.kegiatan)}</td>${cols.map(c=>`<td class="lane">${c===s.pelaksana?`<div class="shp" data-g="${g}">${shapeSVG(s.tipe,g)}</div>`:''}</td>`).join('')}<td class="c-mb">${esc(s.kelengkapan)}</td><td class="c-mb">${esc(s.waktu)}</td><td class="c-mb">${esc(s.output)}</td><td class="c-ket">${esc(s.ket)}</td></tr>`});
+ if(!idxs.length)rows=`<tr><td colspan="${cols.length+6}" style="text-align:center;padding:30px;color:#777">Belum ada langkah. Tambahkan langkah pada formulir di atas.</td></tr>`;
+ if(!opt.measure&&p<nPages-1&&idxs.length)rows+=conn(idxs[idxs.length-1],L(p),'bot');
+ const legend=opt.legend===false?'':`<div class="legend"><span>${shapeSVG('mulai',0).replace('width="64" height="24"','width="40" height="15"')} Mulai/Selesai</span><span>${shapeSVG('proses',-1).replace('width="48" height="24"','width="30" height="15"').replace('>0<','><')} Proses</span><span>${shapeSVG('keputusan',-1).replace('width="46" height="46"','width="18" height="18"').replace('>0<','><')} Keputusan</span><span>${shapeSVG('dokumen',-1).replace('width="50" height="30"','width="26" height="16"').replace('>0<','><')} Dokumen</span><span>${pentagon('').replace('width="24" height="24"','width="15" height="15"')} Penghubung halaman</span></div>`;
+ return`<div class="sheet flow" data-p="${p}">
+ <div class="pg-head"><div class="pg-title">BAGAN ALIR SOP</div><div class="pg-sub">${esc(m.judul||'(Judul SOP)')} — ${esc(m.unit)} · No. ${esc(m.nomor||'-')}</div></div>
+ <div class="flowwrap"><table class="ft"><colgroup><col style="width:7mm"><col style="width:52mm">${cols.map(()=>'<col>').join('')}<col style="width:25mm"><col style="width:16mm"><col style="width:25mm"><col style="width:25mm"></colgroup>
+ <thead><tr><th rowspan="2">No</th><th rowspan="2">Kegiatan</th><th colspan="${cols.length}">Pelaksana</th><th colspan="3">Mutu Baku</th><th rowspan="2">Ket</th></tr>
+ <tr>${lanes}<th>Kelengkapan</th><th>Waktu</th><th>Output</th></tr></thead><tbody>${rows}</tbody></table><svg class="links"></svg></div>
+ <div class="pg-foot">${legend}<span>${esc(DB.settings.instansi)} · Halaman ${p+1} dari ${nPages}</span></div></div>`}
+
+function identHTML(sop){const m=sop.meta,st=DB.settings;
+ const ol=t=>{const a=lines(t);return a.length?`<ol>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:'<p>-</p>'};
+ const pr=t=>{const a=lines(t);return a.length?a.map(x=>`<p>${esc(x)}</p>`).join(''):'<p>-</p>'};
+ return`<div class="sheet ident"><div class="id-title">LEMBAR IDENTITAS SOP</div><div class="id-sub">${esc(m.judul||'(Judul SOP)')}</div>
+ <table class="idt"><colgroup><col style="width:44%"><col style="width:17%"><col></colgroup>
+ <tr><td rowspan="6" class="id-logo"><img src="${logoSrc()}" alt=""><div class="b">${esc(st.instansi)}</div><div class="b">${esc(m.unit)}</div></td><td>Nomor SOP</td><td>${esc(m.nomor||'-')}</td></tr>
+ <tr><td>Tanggal Pembuatan</td><td>${fmtTgl(m.tglBuat)}</td></tr><tr><td>Tanggal Revisi</td><td>${fmtTgl(m.tglRevisi)}</td></tr><tr><td>Tanggal Efektif</td><td>${fmtTgl(m.tglEfektif)}</td></tr>
+ <tr><td style="vertical-align:middle">Disahkan oleh</td><td class="ttd"><div>${esc(m.jabatan)}</div><div class="sp"></div><div class="nm">${esc(m.nama)}</div><div>NIP ${esc(m.nip)}</div></td></tr>
+ <tr><td>Judul SOP</td><td>${esc(m.judul)}</td></tr></table>
+ <table class="idt2"><tr><td><h4>DASAR HUKUM</h4>${ol(m.dasarHukum)}</td><td><h4>KUALIFIKASI PELAKSANA</h4>${ol(m.kualifikasi)}</td></tr>
+ <tr><td><h4>KETERKAITAN</h4>${ol(m.keterkaitan)}</td><td><h4>PERALATAN/PERLENGKAPAN</h4>${ol(m.peralatan)}</td></tr>
+ <tr><td><h4>PERINGATAN</h4>${pr(m.peringatan)}</td><td><h4>PENCATATAN DAN PENDATAAN</h4>${pr(m.pencatatan)}</td></tr></table></div>`}
+
+function paginate(sop,per){const n=sop.steps.length,all=[...Array(n).keys()];if(!n)return[[]];
+ if(per>0){const r=[];for(let i=0;i<n;i+=per)r.push(all.slice(i,i+per));return r}
+ const M=$('#measure');M.innerHTML=flowPageHTML(sop,0,all,1,{measure:true});
+ const head=M.querySelector('.pg-head').offsetHeight+8,thead=M.querySelector('thead').offsetHeight,foot=M.querySelector('.pg-foot').offsetHeight+5;
+ const hs=[...M.querySelectorAll('tr[data-g]')].map(t=>t.offsetHeight);M.innerHTML='';
+ const H=188*MM-head-thead-foot-6,CONN=31,pages=[];let cur=[],used=0;
+ hs.forEach((h,i)=>{const top=pages.length?CONN:0;const need=used+h+top+(i<n-1?CONN:0);if(cur.length&&need>H){pages.push(cur);cur=[];used=0}cur.push(i);used+=h});
+ if(cur.length)pages.push(cur);return pages}
+
+function renderDoc(el,sop,o){let h='';const frame=o.frame;const wrap=x=>frame?`<div class="frame">${x}</div>`:x;
+ if(o.ident)h+=wrap(identHTML(sop));
+ if(o.alir){const pg=paginate(sop,o.per||0);pg.forEach((ix,p)=>h+=wrap(flowPageHTML(sop,p,ix,pg.length,{legend:o.legend})))}
+ el.innerHTML=h;drawLinks(el,sop)}
+
+function drawLinks(root,sop){const S=sop.steps;
+ root.querySelectorAll('.flowwrap').forEach((W,pi)=>{const svg=W.querySelector('svg.links'),WR=W.getBoundingClientRect();
+  svg.setAttribute('width',W.offsetWidth);svg.setAttribute('height',W.offsetHeight);
+  const bx=el=>{const r=el.getBoundingClientRect();return{l:r.left-WR.left,t:r.top-WR.top,r:r.right-WR.left,b:r.bottom-WR.top,cx:(r.left+r.right)/2-WR.left,cy:(r.top+r.bottom)/2-WR.top}};
+  const shp=g=>{const e=W.querySelector(`.shp[data-g="${g}"]`);return e?bx(e.firstElementChild):null};
+  const id='mk'+pi+uid();
+  let o=`<defs><marker id="${id}a" markerWidth="8" markerHeight="8" refX="7.5" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8z" fill="#0b5d8f"/></marker><marker id="${id}r" markerWidth="8" markerHeight="8" refX="7.5" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8z" fill="#be123c"/></marker></defs>`;
+  const P=(d,red)=>`<path d="${d}" fill="none" stroke="${red?'#be123c':'#0b5d8f'}" stroke-width="1.3" stroke-linejoin="round" marker-end="url(#${id}${red?'r':'a'})"/>`;
+  const T=(x,y,t,red,a)=>`<text x="${x}" y="${y}" font-family="Arial" font-size="9" font-weight="700" fill="${red?'#be123c':'#0b5d8f'}" text-anchor="${a||'start'}">${t}</text>`;
+  const orth=(sx,sy,ex,ey,rowB)=>{if(Math.abs(sx-ex)<1.5)return`M${sx} ${sy}V${ey}`;let my=rowB-9;if(!(my>sy+6&&my<ey-6))my=(sy+ey)/2;return`M${sx} ${sy}V${my}H${ex}V${ey}`};
+  const gs=[...W.querySelectorAll('tr[data-g]')].map(t=>+t.dataset.g);
+  const ll=W.querySelector('th.lane-last'),laneR=ll?bx(ll).r:0;
+  const ot=W.querySelector('.off[data-off="top"]');
+  if(ot&&gs.length){const a=bx(ot.firstElementChild),b=shp(gs[0]);if(b)o+=P(orth(a.cx,a.b,b.cx,b.t-1,a.b+16))}
+  let k=0;
+  gs.forEach((g,j)=>{const s=S[g],a=shp(g);if(!a)return;const rowB=bx(W.querySelector(`tr[data-g="${g}"]`)).b,isK=s.tipe==='keputusan';
+   if(s.tipe!=='selesai'&&g+1<S.length){let t=null;
+    if(j+1<gs.length)t=shp(gs[j+1]);else{const ob=W.querySelector('.off[data-off="bot"]');if(ob)t=bx(ob.firstElementChild)}
+    if(t){o+=P(orth(a.cx,a.b,t.cx,t.t-1,rowB));if(isK)o+=T(a.cx+5,a.b+10,'Ya')}}
+   if(isK&&s.tidakKe){const ti=S.findIndex(x=>x.id===s.tidakKe);if(ti>=0){const b=gs.includes(ti)?shp(ti):null;
+    if(b){const x=Math.max(laneR-7-k*7,a.r+16);k++;o+=P(`M${a.r} ${a.cy}H${x}V${b.cy}H${b.r+1}`,true)+T(a.r+3,a.cy-4,'Tidak',true)}
+    else{const x=a.r+20;o+=`<path d="M${a.r} ${a.cy}H${x}" stroke="#be123c" stroke-width="1.3"/><circle cx="${x+9}" cy="${a.cy}" r="9" fill="#fff" stroke="#be123c" stroke-width="1.3"/>`+T(x+9,a.cy+3,ti+1,true,'middle')+T(a.r+3,a.cy-4,'Tidak',true)}}}
+  });
+  svg.innerHTML=o})}
+
+/* ================== HOME ================== */
+function renderHome(){const st=DB.settings;
+ const f=$('#fSeksi'),fv=f.value;f.innerHTML='<option value="">Semua Unit / Seksi</option>'+st.seksi.map(s=>`<option>${esc(s)}</option>`).join('');f.value=fv;
+ const q=$('#q').value.toLowerCase();
+ const list=DB.sops.filter(s=>(!f.value||s.meta.unit===f.value)&&(!q||(s.meta.judul+' '+s.meta.nomor).toLowerCase().includes(q))).sort((a,b)=>b.updated-a.updated);
+ const eff=DB.sops.filter(s=>s.meta.tglEfektif).length,steps=DB.sops.reduce((n,s)=>n+s.steps.length,0);
+ const per={};DB.sops.forEach(s=>per[s.meta.unit]=(per[s.meta.unit]||0)+1);const top=Object.entries(per).sort((a,b)=>b[1]-a[1])[0];
+ $('#stats').innerHTML=`<div class="stat"><b>${DB.sops.length}</b><span>Total SOP terdaftar</span></div><div class="stat"><b>${eff}</b><span>SOP sudah efektif</span></div><div class="stat"><b>${DB.sops.length-eff}</b><span>Masih draf</span></div><div class="stat"><b>${steps}</b><span>Total langkah kegiatan</span></div><div class="stat"><b style="font-size:16px;line-height:32px">${top?esc(top[0]):'-'}</b><span>Unit dengan SOP terbanyak</span></div>`;
+ $('#sopGrid').innerHTML=list.length?list.map(s=>`<div class="sopc"><div class="no">${esc(s.meta.nomor||'Nomor belum diisi')}</div><div class="jd" data-open="${s.id}">${esc(s.meta.judul||'(SOP tanpa judul)')}</div>
+  <div class="tg"><span class="tag">${esc(s.meta.unit||'-')}</span><span class="tag">${s.steps.length} langkah</span>${s.meta.tglEfektif?`<span class="tag">Efektif ${fmtTgl(s.meta.tglEfektif)}</span>`:'<span class="tag g">Draf</span>'}</div>
+  <div class="muted">Diubah ${new Date(s.updated).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})}</div>
+  <div class="ft"><button class="btn sm pri" data-open="${s.id}">Buka</button><button class="btn sm" data-exp="${s.id}">⬇ File</button><button class="btn sm" data-dup="${s.id}">⧉ Duplikat</button><button class="btn sm danger" data-del="${s.id}">Hapus</button></div></div>`).join('')
+  :`<div class="empty" style="grid-column:1/-1">${DB.sops.length?'Tidak ada SOP yang cocok dengan pencarian.':'Belum ada SOP. Klik <b>SOP Baru</b> atau <b>Tambah Contoh SOP</b> untuk memulai.'}</div>`}
+
+function show(view){$('#home').classList.toggle('hidden',view!=='home');$('#editor').classList.toggle('hidden',view!=='editor');$('#heroHome').classList.toggle('hidden',view!=='home');$('#heroEditor').classList.toggle('hidden',view!=='editor');
+ if(view==='home'){cur=null;renderHome()}window.scrollTo({top:0,behavior:'smooth'})}
+function openSop(id){cur=id;editingId=null;const s=getSop();if(!s)return;show('editor');fillMeta();renderEditor();setTab(tab);$('#heroJudul').textContent=s.meta.judul||'(SOP tanpa judul)';lastSaved=null;$('#saveStatus').textContent='Draft tersimpan otomatis di browser ini'}
+function dupSop(id){const s=DB.sops.find(x=>x.id===id);if(!s)return;const c=JSON.parse(JSON.stringify(s));c.id=uid();c.created=c.updated=Date.now();c.meta.judul=(c.meta.judul||'SOP')+' (salinan)';
+ const map={};c.steps.forEach(x=>{const n=uid();map[x.id]=n;x.id=n});c.steps.forEach(x=>{if(x.tidakKe)x.tidakKe=map[x.tidakKe]||''});DB.sops.push(c);save(1);return c}
+function exportSop(s){download(safeName(s.meta.judul)+'.sop.json',JSON.stringify({app:'SOP-AP-SungaiLala',ver:1,sop:s},null,1));toast('File SOP disimpan ke folder Unduhan')}
+
+/* ================== EDITOR ================== */
+function fillMeta(){const s=getSop(),st=DB.settings;$('#mUnit').innerHTML=[...new Set([...st.seksi,s.meta.unit].filter(Boolean))].map(x=>`<option>${esc(x)}</option>`).join('');
+ $$('[data-m]').forEach(el=>el.value=s.meta[el.dataset.m]??'')}
+function renderEditor(){renderPel();renderForm();renderSteps();schedulePreview(true)}
+function renderPel(){const s=getSop();
+ $('#pelChips').innerHTML=s.pelaksana.map((p,i)=>`<span class="chip" title="Klik dua kali untuk ganti nama" data-ren="${i}">${i>0?`<button data-pl="${i}" title="Geser kiri">◀</button>`:''}${esc(p)}${i<s.pelaksana.length-1?`<button data-pr="${i}" title="Geser kanan">▶</button>`:''}<button data-px="${i}" title="Hapus">✕</button></span>`).join('')||'<span class="muted">Belum ada kolom pelaksana.</span>';
+ const v=$('#fPel').value;$('#fPel').innerHTML=s.pelaksana.map(p=>`<option>${esc(p)}</option>`).join('');if(s.pelaksana.includes(v))$('#fPel').value=v}
+function renderForm(){const s=getSop(),ed=editingId?s.steps.find(x=>x.id===editingId):null;
+ $('#formTitle').textContent=ed?`Ubah Langkah ${s.steps.indexOf(ed)+1}`:'Tambah Langkah';$('#btnStepSave').textContent=ed?'Simpan Perubahan':'Tambah Langkah';$('#btnStepCancel').classList.toggle('hidden',!ed);$('#posWrap').classList.toggle('hidden',!!ed||!s.steps.length);
+ $('#fPos').innerHTML='<option value="end">Di akhir</option>'+s.steps.map((x,i)=>`<option value="${i}">Setelah langkah ${i+1}</option>`).join('');
+ $('#fTidak').innerHTML='<option value="">— pilih langkah —</option>'+s.steps.filter(x=>x.id!==editingId).map(x=>`<option value="${x.id}">Langkah ${s.steps.indexOf(x)+1} · ${esc(x.kegiatan.slice(0,60))}</option>`).join('');
+ const sug=[...new Set(s.steps.flatMap(x=>[x.kelengkapan,x.output]).filter(Boolean))];$('#dlKel').innerHTML=sug.map(x=>`<option value="${esc(x)}">`).join('');
+ if(ed){$('#fKeg').value=ed.kegiatan;$('#fTipe').value=ed.tipe;$('#fPel').value=ed.pelaksana;$('#fTidak').value=ed.tidakKe||'';$('#fKel').value=ed.kelengkapan;$('#fWaktu').value=ed.waktu;$('#fOut').value=ed.output;$('#fKet').value=ed.ket}
+ else if(!s.steps.length)$('#fTipe').value='mulai';
+ else if($('#fTipe').value==='mulai'&&!$('#fKeg').value)$('#fTipe').value='proses';
+ $('#tidakWrap').classList.toggle('hidden',$('#fTipe').value!=='keputusan')}
+function clearForm(){editingId=null;['#fKeg','#fKel','#fWaktu','#fOut','#fKet'].forEach(x=>$(x).value='');const s=getSop();$('#fTipe').value=s.steps.length?'proses':'mulai';renderForm()}
+function renderSteps(){const s=getSop();$('#stepCount').textContent=s.steps.length?`(${s.steps.length})`:'';
+ $('#stepList').innerHTML=s.steps.length?s.steps.map((x,i)=>{const t=x.tidakKe?s.steps.findIndex(y=>y.id===x.tidakKe):-1;
+  return`<div class="step ${x.tipe}${x.id===editingId?' editing':''}" draggable="true" data-id="${x.id}"><span class="grip" title="Seret untuk memindah">⋮⋮</span><div class="bd"><div class="hd">Langkah ${i+1} · ${TIPE[x.tipe]}</div><div class="kg">${esc(x.kegiatan)}</div><div class="pl">${esc(x.pelaksana)}${x.tipe==='keputusan'?(t>=0?` · <span style="color:var(--red)">Tidak → langkah ${t+1}</span>`:' · <span style="color:var(--red)">tujuan "Tidak" belum dipilih</span>'):''}${x.waktu?' · ⏱ '+esc(x.waktu):''}</div></div>
+  <div class="ops"><button data-se="${x.id}" title="Ubah">✎</button><button data-su="${x.id}" title="Naik">↑</button><button data-sd="${x.id}" title="Turun">↓</button><button data-sc="${x.id}" title="Duplikat">⧉</button><button data-sx="${x.id}" title="Hapus" style="color:var(--red)">✕</button></div></div>`}).join('')
+  :'<div class="empty">Belum ada langkah.<br>Mulai dengan langkah bertipe <b>Mulai</b>.</div>';
+ renderValid()}
+function renderValid(){const s=getSop(),S=s.steps,w=[];
+ if(!s.meta.judul)w.push('Judul SOP belum diisi (tab Identitas SOP).');if(!s.meta.nomor)w.push('Nomor SOP belum diisi.');
+ if(S.length){if(S[0].tipe!=='mulai')w.push('Langkah pertama sebaiknya bertipe <b>Mulai</b>.');if(S[S.length-1].tipe!=='selesai')w.push('Langkah terakhir sebaiknya bertipe <b>Selesai</b>.');
+  S.forEach((x,i)=>{if(x.tipe==='keputusan'&&!S.some(y=>y.id===x.tidakKe))w.push(`Langkah ${i+1}: pilih tujuan jika "Tidak".`);if(!s.pelaksana.includes(x.pelaksana))w.push(`Langkah ${i+1}: pelaksana "${esc(x.pelaksana)}" tidak ada di kolom pelaksana.`);if(x.tipe==='selesai'&&i<S.length-1)w.push(`Langkah ${i+1} bertipe Selesai tetapi bukan langkah terakhir.`)})}
+ else w.push('Belum ada langkah kegiatan.');
+ $('#validBox').innerHTML=w.length?`<div class="valid warn"><b>Periksa sebelum dicetak:</b><ul>${w.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:'<div class="valid ok">✔ SOP lengkap dan siap dicetak.</div>'}
+function moveStep(id,d){const S=getSop().steps,i=S.findIndex(x=>x.id===id),j=i+d;if(j<0||j>=S.length)return;[S[i],S[j]]=[S[j],S[i]];touch();renderSteps();renderForm()}
+
+function schedulePreview(now){clearTimeout(pvT);pvT=setTimeout(renderPreview,now?0:200)}
+function renderPreview(){const s=getSop();if(!s)return;const per=+$('#pPer').value;
+ if(tab==='alir')renderDoc($('#pvAlir'),s,{alir:true,frame:true,per,legend:$('#pLegend').checked});
+ if(tab==='ident')renderDoc($('#pvIdent'),s,{ident:true,frame:true});
+ if(tab==='cetak')renderDoc($('#pvCetak'),s,{ident:$('#pIdent').checked,alir:$('#pAlir').checked,frame:true,per,legend:$('#pLegend').checked})}
+function setTab(t){tab=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));['alir','ident','cetak'].forEach(x=>$('#tab-'+x).classList.toggle('hidden',x!==t));schedulePreview(true)}
+
+function doPrint(){const s=getSop();if(!s)return;const o={ident:$('#pIdent').checked,alir:$('#pAlir').checked,per:+$('#pPer').value,legend:$('#pLegend').checked};
+ if(!o.ident&&!o.alir){toast('Pilih minimal satu bagian untuk dicetak',true);return}
+ renderDoc($('#printArea'),s,o);const old=document.title;document.title='SOP - '+safeName(s.meta.judul);
+ setTimeout(()=>{window.print();document.title=old},150)}
+
+/* ================== EVENTS ================== */
+$('#btnNew').onclick=()=>{const s=newSop();DB.sops.push(s);save(1);tab='ident';openSop(s.id);toast('SOP baru dibuat — isi identitasnya dulu')};
+$('#btnContoh').onclick=()=>{const s=contohSop();DB.sops.push(s);save(1);renderHome();toast('Contoh SOP ditambahkan')};
+$('#q').oninput=renderHome;$('#fSeksi').onchange=renderHome;
+$('#sopGrid').onclick=e=>{const b=e.target.closest('[data-open],[data-exp],[data-dup],[data-del]');if(!b)return;
+ if(b.dataset.open){tab='alir';openSop(b.dataset.open)}
+ else if(b.dataset.exp)exportSop(DB.sops.find(x=>x.id===b.dataset.exp));
+ else if(b.dataset.dup){dupSop(b.dataset.dup);renderHome();toast('SOP diduplikat')}
+ else if(b.dataset.del){const s=DB.sops.find(x=>x.id===b.dataset.del);if(confirm(`Hapus SOP "${s.meta.judul||'tanpa judul'}"?\nTindakan ini tidak bisa dibatalkan.`)){DB.sops=DB.sops.filter(x=>x!==s);save(1);renderHome();toast('SOP dihapus')}}};
+$('#btnBackup').onclick=()=>{if(!DB.sops.length)return toast('Belum ada SOP untuk dibackup',true);download('Backup-SOP-Sungai-Lala-'+today()+'.json',JSON.stringify({app:'SOP-AP-SungaiLala',ver:1,backup:true,sops:DB.sops,settings:DB.settings}));toast('Backup semua SOP disimpan')};
+$('#btnRegCsv').onclick=()=>{if(!DB.sops.length)return toast('Belum ada SOP',true);const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const rows=[['No','Nomor SOP','Judul SOP','Unit/Seksi','Tanggal Pembuatan','Tanggal Revisi','Tanggal Efektif','Disahkan Oleh','Jumlah Langkah','Status']].concat([...DB.sops].sort((a,b)=>(a.meta.nomor||'').localeCompare(b.meta.nomor||'',undefined,{numeric:true})).map((s,i)=>[i+1,s.meta.nomor,s.meta.judul,s.meta.unit,fmtTgl(s.meta.tglBuat),fmtTgl(s.meta.tglRevisi),fmtTgl(s.meta.tglEfektif),s.meta.nama,s.steps.length,s.meta.tglEfektif?'Efektif':'Draf']));
+ download('Daftar-SOP-Kecamatan-Sungai-Lala.csv','\ufeffsep=;\n'+rows.map(r=>r.map(q).join(';')).join('\n'),'text/csv');toast('Daftar SOP diekspor — buka dengan Excel')};
+$('#btnOpen').onclick=()=>$('#fileOpen').click();
+$('#fileOpen').onchange=e=>{const all=[...e.target.files];e.target.value='';if(!all.length)return;const csv=all.filter(f=>/\.csv$/i.test(f.name)),js=all.filter(f=>!/\.csv$/i.test(f.name));if(csv.length)importCsvFiles(csv);js.forEach(openJsonFile)};
+function openJsonFile(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
+ if(d.backup&&Array.isArray(d.sops)){let add=0,rep=0;d.sops.forEach(s=>{const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){DB.sops[i]=s;rep++}else{DB.sops.push(s);add++}});
+  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
+ else if(d.sop&&d.sop.meta){const s=d.sop,i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){if(confirm('SOP ini sudah ada. Timpa dengan versi dari file?\n(Batal = simpan sebagai SOP baru)'))DB.sops[i]=s;else{s.id=uid();DB.sops.push(s)}}else DB.sops.push(s);save(1);tab='alir';openSop(s.id);toast('SOP dibuka dari file')}
+ else throw 0}catch(_){toast('File "'+f.name+'" tidak dikenali sebagai file SOP',true)}};r.readAsText(f)}
+
+$('#btnBack').onclick=()=>show('home');
+$('#btnSaveFile').onclick=()=>exportSop(getSop());
+$('#btnDup').onclick=()=>{const c=dupSop(cur);openSop(c.id);toast('Salinan SOP dibuat & dibuka')};
+$('#btnPrint').onclick=doPrint;$('#btnPrint2').onclick=doPrint;
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.tab)};
+['#pIdent','#pAlir','#pPer','#pLegend'].forEach(x=>$(x).onchange=()=>schedulePreview(true));
+
+$$('[data-m]').forEach(el=>el.addEventListener('input',()=>{getSop().meta[el.dataset.m]=el.value;touch();if(['judul','nomor'].includes(el.dataset.m))renderValid()}));
+$('#mUnit').addEventListener('change',()=>{getSop().meta.unit=$('#mUnit').value;touch()});
+$('#btnAutoNo').onclick=()=>{const s=getSop(),st=DB.settings,kd=kodeSeksi(s.meta.unit),pre=`${st.klasifikasi}/${st.kode}/SOP-${kd}/`;
+ let mx=0;DB.sops.forEach(x=>{if(x!==s&&(x.meta.nomor||'').startsWith(pre)){const n=parseInt(x.meta.nomor.slice(pre.length));if(n>mx)mx=n}});
+ s.meta.nomor=pre+(mx+1);$('[data-m="nomor"]').value=s.meta.nomor;touch();renderValid();toast('Nomor dibuat: '+s.meta.nomor)};
+
+$('#pelAdd').onclick=()=>{const v=$('#pelNew').value.trim(),s=getSop();if(!v)return;if(s.pelaksana.includes(v))return toast('Pelaksana sudah ada',true);s.pelaksana.push(v);$('#pelNew').value='';touch();renderPel();$('#fPel').value=v};
+$('#pelNew').onkeydown=e=>{if(e.key==='Enter')$('#pelAdd').click()};
+$('#pelChips').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=getSop(),P=s.pelaksana;
+ if(b.dataset.px!=null){const i=+b.dataset.px,n=s.steps.filter(x=>x.pelaksana===P[i]).length;if(n&&!confirm(`"${P[i]}" dipakai di ${n} langkah. Tetap hapus kolom ini?`))return;P.splice(i,1)}
+ if(b.dataset.pl!=null){const i=+b.dataset.pl;[P[i-1],P[i]]=[P[i],P[i-1]]}
+ if(b.dataset.pr!=null){const i=+b.dataset.pr;[P[i+1],P[i]]=[P[i],P[i+1]]}
+ touch();renderPel();renderValid()};
+$('#pelChips').ondblclick=e=>{const c=e.target.closest('[data-ren]');if(!c||e.target.closest('button'))return;const s=getSop(),i=+c.dataset.ren,old=s.pelaksana[i],v=(prompt('Ganti nama pelaksana:',old)||'').trim();
+ if(!v||v===old)return;if(s.pelaksana.includes(v))return toast('Nama sudah dipakai',true);s.pelaksana[i]=v;s.steps.forEach(x=>{if(x.pelaksana===old)x.pelaksana=v});touch();renderPel();renderSteps()};
+
+$('#fTipe').onchange=()=>$('#tidakWrap').classList.toggle('hidden',$('#fTipe').value!=='keputusan');
+$('#qWaktu').innerHTML=WAKTU.map(w=>`<span>${w}</span>`).join('');
+$('#qWaktu').onclick=e=>{if(e.target.tagName==='SPAN')$('#fWaktu').value=e.target.textContent};
+$('#btnStepSave').onclick=()=>{const s=getSop(),keg=$('#fKeg').value.trim();if(!keg){$('#fKeg').focus();return toast('Isi deskripsi kegiatan dulu',true)}
+ if(!s.pelaksana.length)return toast('Tambahkan kolom pelaksana dulu',true);
+ const d={kegiatan:keg,tipe:$('#fTipe').value,pelaksana:$('#fPel').value,kelengkapan:$('#fKel').value.trim(),waktu:$('#fWaktu').value.trim(),output:$('#fOut').value.trim(),ket:$('#fKet').value.trim(),tidakKe:$('#fTipe').value==='keputusan'?$('#fTidak').value:''};
+ if(editingId){Object.assign(s.steps.find(x=>x.id===editingId),d);toast('Langkah diperbarui')}
+ else{d.id=uid();const p=$('#fPos').value;if(p==='end'||!s.steps.length)s.steps.push(d);else s.steps.splice(+p+1,0,d);toast('Langkah ditambahkan')}
+ touch();clearForm();renderSteps()};
+$('#btnStepCancel').onclick=()=>{clearForm();renderSteps()};
+$('#stepList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=getSop(),d=b.dataset;
+ if(d.se){editingId=d.se;renderForm();renderSteps();$('#formTitle').scrollIntoView({behavior:'smooth',block:'start'})}
+ else if(d.su)moveStep(d.su,-1);else if(d.sd)moveStep(d.sd,1);
+ else if(d.sc){const i=s.steps.findIndex(x=>x.id===d.sc);s.steps.splice(i+1,0,{...s.steps[i],id:uid()});touch();renderSteps();renderForm()}
+ else if(d.sx){const x=s.steps.find(y=>y.id===d.sx);if(!confirm(`Hapus langkah "${x.kegiatan.slice(0,60)}"?`))return;s.steps=s.steps.filter(y=>y!==x);s.steps.forEach(y=>{if(y.tidakKe===x.id)y.tidakKe=''});if(editingId===x.id)editingId=null;touch();renderSteps();renderForm()}};
+let dragId=null;
+$('#stepList').addEventListener('dragstart',e=>{const c=e.target.closest('.step');if(c){dragId=c.dataset.id;e.dataTransfer.effectAllowed='move'}});
+$('#stepList').addEventListener('dragover',e=>{const c=e.target.closest('.step');if(!c)return;e.preventDefault();$$('.step.dragover').forEach(x=>x.classList.remove('dragover'));c.classList.add('dragover')});
+$('#stepList').addEventListener('drop',e=>{e.preventDefault();const c=e.target.closest('.step');$$('.step.dragover').forEach(x=>x.classList.remove('dragover'));if(!c||!dragId||c.dataset.id===dragId)return;
+ const S=getSop().steps,from=S.findIndex(x=>x.id===dragId),it=S.splice(from,1)[0],to=S.findIndex(x=>x.id===c.dataset.id);S.splice(to,0,it);dragId=null;touch();renderSteps();renderForm()});
+
+/* ===== CSV Portal SOP (impor / ekspor) ===== */
+function parseCSV(t,sep){t=t.replace(/^﻿/,'');const rows=[];let row=[],f='',q=false;
+ for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"')q=true;else if(c===sep){row.push(f);f=''}
+  else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}
+  else f+=c}
+ if(f!==''||row.length){row.push(f);rows.push(row)}return rows}
+function csvToSop(text){text=text.replace(/^﻿/,'').replace(/^sep=.\r?\n/i,'');
+ const first=text.split(/\r?\n/)[0],sep=(first.split(';').length>first.split(',').length)?';':',';
+ const R=parseCSV(text,sep),M={},ST=[];
+ R.forEach(r=>{const t=(r[0]||'').trim().toUpperCase();if(t==='META')M[(r[1]||'').trim()]=r.slice(2).join(sep);else if(t==='STEP')ST.push(r)});
+ if(!M.judul&&!ST.length)throw new Error('format');
+ const ml=v=>String(v||'').split(/\r?\n/).map(x=>x.replace(/[\t ]+/g,' ').trim()).filter(Boolean).join('\n');
+ const one=v=>String(v||'').replace(/\s+/g,' ').trim();
+ const s=newSop(),m=s.meta;
+ Object.assign(m,{judul:one(M.judul),unit:one(M.unit)||m.unit,nomor:one(M.nomor),tglBuat:one(M.tglBuat),tglRevisi:one(M.tglRevisi),tglEfektif:one(M.tglEfektif),
+  jabatan:one(M.disahkanJabatan)||m.jabatan,nama:one(M.disahkanNama)||m.nama,nip:one(M.disahkanNip)||m.nip,
+  dasarHukum:ml(M.dasarHukum),kualifikasi:ml(M.kualifikasi),keterkaitan:ml(M.keterkaitan),peralatan:ml(M.peralatan),peringatan:ml(M.peringatan),pencatatan:ml(M.pencatatan)});
+ m.extra={useESign:M.useESign||'',tteKode:M.tteKode||'',ttePenyelenggara:M.ttePenyelenggara||'',instansi:M.instansi||''};
+ s.pelaksana=String(M.pelaksanaList||'').split('|').map(one).filter(Boolean);
+ const TP={mulai:'mulai',start:'mulai',proses:'proses',process:'proses',keputusan:'keputusan',decision:'keputusan',dokumen:'dokumen',document:'dokumen',selesai:'selesai',end:'selesai',finish:'selesai'};
+ const byNo={};
+ s.steps=ST.map((r,i)=>{const st={id:uid(),kegiatan:one(r[2]),tipe:TP[one(r[3]).toLowerCase()]||'proses',pelaksana:one(r[4]),kelengkapan:one(r[5]),waktu:one(r[6]),output:one(r[7]),ket:one(r[8]),tidakKe:one(r[9])};
+  byNo[one(r[1])||String(i+1)]=st.id;if(st.pelaksana&&!s.pelaksana.includes(st.pelaksana))s.pelaksana.push(st.pelaksana);return st});
+ s.steps.forEach((st,i)=>{st.tidakKe=st.tipe==='keputusan'&&st.tidakKe?(byNo[st.tidakKe]||(s.steps[+st.tidakKe-1]||{}).id||''):''});
+ if(m.unit&&!DB.settings.seksi.includes(m.unit))DB.settings.seksi.push(m.unit);
+ return s}
+function sopToCsv(s){const q=v=>{v=String(v??'');return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},m=s.meta,x=m.extra||{};
+ const meta=[['judul',m.judul],['instansi',x.instansi||DB.settings.instansi],['unit',m.unit],['nomor',m.nomor],['tglBuat',m.tglBuat],['tglRevisi',m.tglRevisi],['tglEfektif',m.tglEfektif],
+  ['disahkanJabatan',m.jabatan],['disahkanNama',m.nama],['disahkanNip',m.nip],['useESign',x.useESign],['tteKode',x.tteKode],['ttePenyelenggara',x.ttePenyelenggara],
+  ['dasarHukum',m.dasarHukum],['kualifikasi',m.kualifikasi],['keterkaitan',m.keterkaitan],['peralatan',m.peralatan],['peringatan',m.peringatan],['pencatatan',m.pencatatan],['pelaksanaList',s.pelaksana.join('|')]];
+ const out=['type,field,value'].concat(meta.map(([k,v])=>['META',k,q(v)].join(',')));
+ s.steps.forEach((st,i)=>{const t=st.tidakKe?s.steps.findIndex(y=>y.id===st.tidakKe):-1;out.push(['STEP',i+1,q(st.kegiatan),st.tipe,q(st.pelaksana),q(st.kelengkapan),q(st.waktu),q(st.output),q(st.ket),t>=0?t+1:''].join(','))});
+ return out.join('\n')+'\n'}
+async function importCsvFiles(files){let ok=0,rep=0,bad=[],last=null,askAll=null;
+ for(const f of files){try{const s=csvToSop(await f.text());
+   const ex=DB.sops.find(x=>x.meta.nomor&&x.meta.nomor===s.meta.nomor&&x.meta.judul===s.meta.judul);
+   if(ex){if(askAll===null)askAll=confirm(`SOP "${s.meta.judul}" sudah ada di daftar.\nTimpa SOP yang sudah ada dengan data dari CSV?\n(OK = timpa, Batal = simpan sebagai SOP baru)`);
+    if(askAll){s.id=ex.id;s.created=ex.created;DB.sops[DB.sops.indexOf(ex)]=s;rep++}else{DB.sops.push(s);ok++}}
+   else{DB.sops.push(s);ok++}last=s}catch(e){bad.push(f.name)}}
+ save(1);
+ if(files.length===1&&last){tab='alir';openSop(last.id)}else renderHome();
+ toast(bad.length?`${ok+rep} SOP diimpor, ${bad.length} file gagal: ${bad.join(', ')}`:`${ok} SOP baru diimpor${rep?`, ${rep} diperbarui`:''} dari Portal SOP`,bad.length&&!(ok+rep))}
+$('#btnSaveCsv').onclick=()=>{const s=getSop();download('sop-'+safeName(s.meta.judul).toLowerCase().replace(/\s+/g,'-')+'.csv',sopToCsv(s),'text/csv');toast('CSV disimpan — bisa dibuka di Portal SOP')};
+
+/* settings */
+let tmpLogo='';
+function applyBrand(){const st=DB.settings;if(!$('#brandLogo').firstChild){$('#brandLogo').innerHTML=logoSVG('hd');$('#ftLogo').innerHTML=logoSVG('ft',{caption:true,light:true})}document.documentElement.style.setProperty('--emblem',`url("${APP_EMBLEM}")`);$('#brandInst').textContent=st.instansi+' · '+st.kabupaten;document.querySelector('link[rel=icon]')?.remove();const l=document.createElement('link');l.rel='icon';l.href=APP_ICON;document.head.appendChild(l)}
+$('#btnSettings').onclick=()=>{const st=DB.settings;$('#sInst').value=st.instansi;$('#sKab').value=st.kabupaten;$('#sJab').value=st.jabatan;$('#sNama').value=st.nama;$('#sNip').value=st.nip;$('#sKlas').value=st.klasifikasi;$('#sKode').value=st.kode;$('#sSeksi').value=st.seksi.join('\n');tmpLogo=st.logo;$('#sLogoPrev').src=tmpLogo||DEF_LOGO;$('#mSet').classList.remove('hidden')};
+$('#sCancel').onclick=()=>$('#mSet').classList.add('hidden');
+$('#mSet').onclick=e=>{if(e.target.id==='mSet')$('#mSet').classList.add('hidden')};
+$('#sLogoBtn').onclick=()=>$('#sLogoFile').click();
+$('#sLogoDel').onclick=()=>{tmpLogo='';$('#sLogoPrev').src=DEF_LOGO};
+$('#sLogoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,320/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);tmpLogo=c.toDataURL('image/png');$('#sLogoPrev').src=tmpLogo};im.src=r.result};r.readAsDataURL(f);e.target.value=''};
+$('#sSave').onclick=()=>{const st=DB.settings;Object.assign(st,{instansi:$('#sInst').value.trim()||DEF_SETTINGS.instansi,kabupaten:$('#sKab').value.trim(),jabatan:$('#sJab').value.trim(),nama:$('#sNama').value.trim(),nip:$('#sNip').value.trim(),klasifikasi:$('#sKlas').value.trim(),kode:$('#sKode').value.trim(),seksi:lines($('#sSeksi').value),logo:tmpLogo});
+ save(1);applyBrand();$('#mSet').classList.add('hidden');if(cur){fillMeta();schedulePreview(true)}else renderHome();toast('Pengaturan disimpan')};
+
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&cur){e.preventDefault();exportSop(getSop())}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='p'&&cur){e.preventDefault();doPrint()}});
+window.addEventListener('beforeprint',()=>{if(!$('#printArea').innerHTML&&cur){const s=getSop();renderDoc($('#printArea'),s,{ident:$('#pIdent').checked,alir:$('#pAlir').checked,per:+$('#pPer').value,legend:$('#pLegend').checked})}});
+window.addEventListener('afterprint',()=>{$('#printArea').innerHTML=''});
+
+/* ===== PWA: bisa diinstal di PC / HP ===== */
+let installEvt=null;
+if(/^https?:$/.test(location.protocol)){const m=document.createElement('link');m.rel='manifest';m.href='manifest.webmanifest';document.head.appendChild(m);
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('#btnInstall').classList.remove('hidden')});
+$('#btnInstall').onclick=async()=>{if(!installEvt)return;installEvt.prompt();const r=await installEvt.userChoice;installEvt=null;$('#btnInstall').classList.add('hidden');if(r.outcome==='accepted')toast('Aplikasi sedang diinstal…')};
+window.addEventListener('appinstalled',()=>{$('#btnInstall').classList.add('hidden');toast('SOP-AP berhasil diinstal di perangkat ini')});
+if(matchMedia('(display-mode: standalone)').matches)document.body.classList.add('standalone');
+
+applyBrand();
+(function(){const sp=$('#splash');let seen=false;try{seen=sessionStorage.getItem('sopSplash')==='1';sessionStorage.setItem('sopSplash','1')}catch(e){}
+ if(seen){sp.remove();return}sp.querySelector('#spLogo').innerHTML=logoSVG('sp',{caption:true});
+ const hide=()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)};sp.onclick=hide;setTimeout(hide,1900)})();
+if(!DB.sops.length){DB.sops.push(contohSop());save(1)}
+show('home');
+</script>
+</body>
+</html>
