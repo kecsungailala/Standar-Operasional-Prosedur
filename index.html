@@ -427,7 +427,7 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
  </section>
 </main>
 
-<footer class="ft"><div class="ftlogo"><div class="lg" id="ftLogo"></div><div>SOP-AP Offline · Kabupaten Indragiri Hulu</div></div></footer>
+<footer class="ft"><div class="ftlogo"><div class="lg" id="ftLogo"></div><div>SOP-AP Offline · Kabupaten Indragiri Hulu · <span id="appVer"></span></div></div></footer>
 <div id="splash"><div class="lg" id="spLogo"></div><div class="ld"><i></i></div></div>
 
 <!-- MODAL PENGATURAN -->
@@ -471,7 +471,8 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
    <div><label class="f">Kode Instansi pada Nomor</label><input class="inp" id="sKode"></div>
   </div>
   <label class="f">Daftar Unit / Seksi (satu per baris)</label>
-  <textarea class="inp" id="sSeksi" rows="6"></textarea>
+  <textarea class="inp" id="sSeksi" rows="7"></textarea>
+  <button class="btn sm" id="sSeksiReset" style="margin-top:6px">↺ Kembalikan daftar Unit/Seksi bawaan</button>
   <label class="f">Logo (untuk kop &amp; lembar identitas)</label>
   <div class="logoprev"><img id="sLogoPrev" alt=""><button class="btn" id="sLogoBtn">Ganti Logo…</button><button class="btn danger" id="sLogoDel">Pakai logo bawaan</button></div>
   <input type="file" id="sLogoFile" accept="image/*" class="hidden">
@@ -575,6 +576,9 @@ const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slic
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fmtTgl=s=>{if(!s)return '-';const[y,m,d]=s.split('-');return (+d)+' '+BULAN[+m-1]+' '+y};
 const L=i=>String.fromCharCode(65+(i%26))+(i>=26?Math.floor(i/26):'');
+const APP_VER='Versi 10 · 26 Okt 2026';
+const OLD_UNITS=['sekretariat','seksi pemerintahan','seksi kesejahteraan sosial','seksi pemberdayaan masyarakat dan desa','sub bagian program dan keuangan'];
+const fixSeksi=st=>{if(!Array.isArray(st.seksi)||!st.seksi.length||st.seksi.some(x=>OLD_UNITS.includes(String(x).trim().toLowerCase()))||(st.seksiVer||0)<3){st.seksi=DEF_SETTINGS.seksi.slice()}st.seksiVer=3;return st};
 const fixUnit=u=>{const k=String(u||'').trim().toLowerCase();return k==='seksi pemerintahan'?'Seksi Pemerintah':(k==='sub bagian program dan keuangan'?'Sub Bagian Progam dan Keuangan':u)};
 function kodeSeksi(n){n=(n||'').toLowerCase();
  if(n.includes('program')||n.includes('progam')||n.includes('keuangan'))return'PK';if(n.includes('sekret'))return'SEKRE';
@@ -582,7 +586,7 @@ function kodeSeksi(n){n=(n||'').toLowerCase();
  if(n.includes('ketentraman')||n.includes('trantib'))return'TRANTIB';if(n.includes('kesejahtera')||n.includes('kesos'))return'KESOS';
  if(n.includes('pelayanan'))return'PELUM';if(n.includes('umum'))return'UMUM';return (n.replace(/seksi|bagian|sub/g,'').trim().split(/\s+/).map(w=>w[0]||'').join('')||'X').toUpperCase()}
 
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops)){const st=Object.assign({},DEF_SETTINGS,d.settings||{});if((st.seksiVer||0)<3){st.seksi=DEF_SETTINGS.seksi.slice();st.seksiVer=3}d.sops.forEach(s=>{if(s.meta)s.meta.unit=fixUnit(s.meta.unit)});return{sops:d.sops,settings:st}}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops)){const st=Object.assign({},DEF_SETTINGS,d.settings||{});fixSeksi(st);d.sops.forEach(s=>{if(s.meta)s.meta.unit=fixUnit(s.meta.unit)});return{sops:d.sops,settings:st}}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
 let DB=load(),cur=null,tab='alir',editingId=null,lastSaved=null,saveT,pvT;
 function save(now){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));lastSaved=new Date();updStatus()}catch(e){toast('Gagal menyimpan — penyimpanan browser penuh. Coba ganti logo dengan gambar lebih kecil.',true)}},now?0:250)}
 function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast'+(err?' err':''),err?6000:2600)}
@@ -782,7 +786,7 @@ $('#btnOpen').onclick=()=>$('#fileOpen').click();
 $('#fileOpen').onchange=e=>{const all=[...e.target.files];e.target.value='';if(!all.length)return;const csv=all.filter(f=>/\.csv$/i.test(f.name)),js=all.filter(f=>!/\.csv$/i.test(f.name));if(csv.length)importCsvFiles(csv);js.forEach(openJsonFile)};
 function openJsonFile(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
  if(d.backup&&Array.isArray(d.sops)){let add=0,rep=0;d.sops.forEach(s=>{if(s.meta)s.meta.unit=fixUnit(s.meta.unit);const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){DB.sops[i]=s;rep++}else{DB.sops.push(s);add++}});
-  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);if((DB.settings.seksiVer||0)<3){DB.settings.seksi=DEF_SETTINGS.seksi.slice();DB.settings.seksiVer=3}save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
+  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);fixSeksi(DB.settings);save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
  else if(d.sop&&d.sop.meta){const s=d.sop;s.meta.unit=fixUnit(s.meta.unit);const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){if(confirm('SOP ini sudah ada. Timpa dengan versi dari file?\n(Batal = simpan sebagai SOP baru)'))DB.sops[i]=s;else{s.id=uid();DB.sops.push(s)}}else DB.sops.push(s);save(1);tab='alir';openSop(s.id);toast('SOP dibuka dari file')}
  else throw 0}catch(_){toast('File "'+f.name+'" tidak dikenali sebagai file SOP',true)}};r.readAsText(f)}
 
@@ -1129,6 +1133,7 @@ $('#btnXls').onclick=$('#btnXls2').onclick=()=>{const s=getSop();if(s)exportExce
 let tmpLogo='';
 function applyBrand(){const st=DB.settings;if(!$('#brandLogo').firstChild){$('#brandLogo').innerHTML=logoSVG('hd');$('#ftLogo').innerHTML=logoSVG('ft',{caption:true,light:true})}document.documentElement.style.setProperty('--emblem',`url("${APP_EMBLEM}")`);$('#brandInst').textContent=st.instansi+' · '+st.kabupaten;}
 $('#btnSettings').onclick=()=>{const st=DB.settings;$('#sInst').value=st.instansi;$('#sKab').value=st.kabupaten;$('#sJab').value=st.jabatan;$('#sNama').value=st.nama;$('#sNip').value=st.nip;$('#sKlas').value=st.klasifikasi;$('#sKode').value=st.kode;$('#sSeksi').value=st.seksi.join('\n');tmpLogo=st.logo;$('#sLogoPrev').src=tmpLogo||DEF_LOGO;$('#mSet').classList.remove('hidden')};
+$('#sSeksiReset').onclick=()=>{$('#sSeksi').value=DEF_SETTINGS.seksi.join('\n')};
 $('#sCancel').onclick=()=>$('#mSet').classList.add('hidden');
 $('#mSet').onclick=e=>{if(e.target.id==='mSet')$('#mSet').classList.add('hidden')};
 $('#sLogoBtn').onclick=()=>$('#sLogoFile').click();
@@ -1150,7 +1155,7 @@ $('#btnInstall').onclick=async()=>{if(!installEvt)return;installEvt.prompt();con
 window.addEventListener('appinstalled',()=>{$('#btnInstall').classList.add('hidden');toast('SOP-AP berhasil diinstal di perangkat ini')});
 if(matchMedia('(display-mode: standalone)').matches)document.body.classList.add('standalone');
 
-applyBrand();
+applyBrand();$('#appVer').textContent=APP_VER;save(1);
 (function(){const sp=$('#splash');let seen=false;try{seen=sessionStorage.getItem('sopSplash')==='1';sessionStorage.setItem('sopSplash','1')}catch(e){}
  if(seen){sp.remove();return}sp.querySelector('#spLogo').innerHTML=logoSVG('sp',{caption:true});
  const hide=()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),700)};sp.onclick=hide;setTimeout(hide,1900)})();
