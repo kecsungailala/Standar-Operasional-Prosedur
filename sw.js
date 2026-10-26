@@ -1,6 +1,6 @@
 /* Service worker SOP-AP Sungai Lala — supaya aplikasi tetap jalan tanpa internet */
-const CACHE = 'sop-ap-sl-v4';
-const FILES = ['./', './index.html', './manifest.webmanifest',
+const CACHE = 'sop-ap-sl-v6';
+const FILES = ['./', './index.html', './manifest.webmanifest', './manifest.webmanifest?v=5',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 self.addEventListener('install', e => {
