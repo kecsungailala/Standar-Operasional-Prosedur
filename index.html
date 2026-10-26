@@ -564,7 +564,7 @@ const DEF_DASAR=[
  'Susunan Organisasi, Tugas dan Fungsi Serta Tata Kerja Kecamatan dan Kelurahan Kabupaten Indragiri Hulu'
 ].join('\n');
 const DEF_SETTINGS={instansi:'Kecamatan Sungai Lala',kabupaten:'Kabupaten Indragiri Hulu',jabatan:'Camat Sungai Lala',nama:'Zeris Anshory, S.E',nip:'19791217 201102 1 001',klasifikasi:'000.8.3.3',kode:'KecSL',
- seksi:['Seksi Pemerintahan','Seksi Pembangunan','Seksi Pemberdayaan Masyarakat','Seksi Pelayanan Umum','Seksi Ketentraman dan Ketertiban Umum','Sub Bagian Umum','Sub Bagian Program dan Keuangan'],seksiVer:2,logo:''};
+ seksi:['Seksi Pemerintah','Seksi Pembangunan','Seksi Pemberdayaan Masyarakat','Seksi Pelayanan Umum','Seksi Ketentraman dan Ketertiban Umum','Sub Bagian Umum','Sub Bagian Progam dan Keuangan'],seksiVer:3,logo:''};
 const WAKTU=['5 Menit','10 Menit','15 Menit','20 Menit','30 Menit','1 Jam','2 Jam','1 Hari'];
 const TIPE={mulai:'Mulai',proses:'Proses',keputusan:'Keputusan',dokumen:'Dokumen',selesai:'Selesai'};
 
@@ -575,13 +575,14 @@ const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slic
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fmtTgl=s=>{if(!s)return '-';const[y,m,d]=s.split('-');return (+d)+' '+BULAN[+m-1]+' '+y};
 const L=i=>String.fromCharCode(65+(i%26))+(i>=26?Math.floor(i/26):'');
+const fixUnit=u=>{const k=String(u||'').trim().toLowerCase();return k==='seksi pemerintahan'?'Seksi Pemerintah':(k==='sub bagian program dan keuangan'?'Sub Bagian Progam dan Keuangan':u)};
 function kodeSeksi(n){n=(n||'').toLowerCase();
- if(n.includes('program')||n.includes('keuangan'))return'PK';if(n.includes('sekret'))return'SEKRE';
+ if(n.includes('program')||n.includes('progam')||n.includes('keuangan'))return'PK';if(n.includes('sekret'))return'SEKRE';
  if(n.includes('pemberdaya')||n.includes('pmd'))return'PMD';if(n.includes('pemerintah'))return'PEM';if(n.includes('pembangunan'))return'BANG';
  if(n.includes('ketentraman')||n.includes('trantib'))return'TRANTIB';if(n.includes('kesejahtera')||n.includes('kesos'))return'KESOS';
  if(n.includes('pelayanan'))return'PELUM';if(n.includes('umum'))return'UMUM';return (n.replace(/seksi|bagian|sub/g,'').trim().split(/\s+/).map(w=>w[0]||'').join('')||'X').toUpperCase()}
 
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops)){const st=Object.assign({},DEF_SETTINGS,d.settings||{});if((st.seksiVer||0)<2){st.seksi=DEF_SETTINGS.seksi.slice();st.seksiVer=2}return{sops:d.sops,settings:st}}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops)){const st=Object.assign({},DEF_SETTINGS,d.settings||{});if((st.seksiVer||0)<3){st.seksi=DEF_SETTINGS.seksi.slice();st.seksiVer=3}d.sops.forEach(s=>{if(s.meta)s.meta.unit=fixUnit(s.meta.unit)});return{sops:d.sops,settings:st}}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
 let DB=load(),cur=null,tab='alir',editingId=null,lastSaved=null,saveT,pvT;
 function save(now){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));lastSaved=new Date();updStatus()}catch(e){toast('Gagal menyimpan — penyimpanan browser penuh. Coba ganti logo dengan gambar lebih kecil.',true)}},now?0:250)}
 function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast'+(err?' err':''),err?6000:2600)}
@@ -594,7 +595,7 @@ function newSop(){const s=DB.settings;return{id:uid(),created:Date.now(),updated
   dasarHukum:DEF_DASAR,kualifikasi:'',keterkaitan:'',peralatan:'Komputer dan Printer\nMeja dan Kursi\nATK dan lain – lain',peringatan:'',pencatatan:''},
  pelaksana:['Pemohon','Staf','Kasi','Camat'],steps:[]}}
 function contohSop(){const s=newSop(),st=(kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket='')=>({id:uid(),kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket,tidakKe:''});
- Object.assign(s.meta,{judul:'Pembuatan Surat Keterangan Verifikasi SPJ Desa',unit:'Seksi Pemerintahan',nomor:'000.8.3.3/KecSL/SOP-PEM/1',tglBuat:'2026-01-02',tglEfektif:'2026-01-04',
+ Object.assign(s.meta,{judul:'Pembuatan Surat Keterangan Verifikasi SPJ Desa',unit:'Seksi Pemerintah',nomor:'000.8.3.3/KecSL/SOP-PEM/1',tglBuat:'2026-01-02',tglEfektif:'2026-01-04',
   kualifikasi:'Pendidikan S.1,S.2\nMemiliki Pengetahuan dan Pemahaman tentang Dana Desa\nMemiliki Kewenangan untuk melaksanakan kegiatan',
   keterkaitan:'SOP Pelaksanaan Kegiatan Monitoring dan Pembinaan',peralatan:'Sepeda Motor\nKomputer dan Printer\nMeja dan Kursi\nATK dan lain – lain',
   peringatan:'Apabila SOP Pelaksanaan Kegiatan Verifikasi SPJ Desa tidak dilaksanakan maka akan mengganggu proses pencairan Desa',
@@ -780,9 +781,9 @@ $('#btnRegCsv').onclick=()=>{if(!DB.sops.length)return toast('Belum ada SOP',tru
 $('#btnOpen').onclick=()=>$('#fileOpen').click();
 $('#fileOpen').onchange=e=>{const all=[...e.target.files];e.target.value='';if(!all.length)return;const csv=all.filter(f=>/\.csv$/i.test(f.name)),js=all.filter(f=>!/\.csv$/i.test(f.name));if(csv.length)importCsvFiles(csv);js.forEach(openJsonFile)};
 function openJsonFile(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
- if(d.backup&&Array.isArray(d.sops)){let add=0,rep=0;d.sops.forEach(s=>{const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){DB.sops[i]=s;rep++}else{DB.sops.push(s);add++}});
-  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);if((DB.settings.seksiVer||0)<2){DB.settings.seksi=DEF_SETTINGS.seksi.slice();DB.settings.seksiVer=2}save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
- else if(d.sop&&d.sop.meta){const s=d.sop,i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){if(confirm('SOP ini sudah ada. Timpa dengan versi dari file?\n(Batal = simpan sebagai SOP baru)'))DB.sops[i]=s;else{s.id=uid();DB.sops.push(s)}}else DB.sops.push(s);save(1);tab='alir';openSop(s.id);toast('SOP dibuka dari file')}
+ if(d.backup&&Array.isArray(d.sops)){let add=0,rep=0;d.sops.forEach(s=>{if(s.meta)s.meta.unit=fixUnit(s.meta.unit);const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){DB.sops[i]=s;rep++}else{DB.sops.push(s);add++}});
+  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);if((DB.settings.seksiVer||0)<3){DB.settings.seksi=DEF_SETTINGS.seksi.slice();DB.settings.seksiVer=3}save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
+ else if(d.sop&&d.sop.meta){const s=d.sop;s.meta.unit=fixUnit(s.meta.unit);const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){if(confirm('SOP ini sudah ada. Timpa dengan versi dari file?\n(Batal = simpan sebagai SOP baru)'))DB.sops[i]=s;else{s.id=uid();DB.sops.push(s)}}else DB.sops.push(s);save(1);tab='alir';openSop(s.id);toast('SOP dibuka dari file')}
  else throw 0}catch(_){toast('File "'+f.name+'" tidak dikenali sebagai file SOP',true)}};r.readAsText(f)}
 
 $('#btnBack').onclick=()=>show('home');
@@ -847,7 +848,7 @@ function csvToSop(text){text=text.replace(/^﻿/,'').replace(/^sep=.\r?\n/i,'');
  const ml=v=>String(v||'').split(/\r?\n/).map(x=>x.replace(/[\t ]+/g,' ').trim()).filter(Boolean).join('\n');
  const one=v=>String(v||'').replace(/\s+/g,' ').trim();
  const s=newSop(),m=s.meta;
- Object.assign(m,{judul:one(M.judul),unit:one(M.unit)||m.unit,nomor:one(M.nomor),tglBuat:one(M.tglBuat),tglRevisi:one(M.tglRevisi),tglEfektif:one(M.tglEfektif),
+ Object.assign(m,{judul:one(M.judul),unit:fixUnit(one(M.unit))||m.unit,nomor:one(M.nomor),tglBuat:one(M.tglBuat),tglRevisi:one(M.tglRevisi),tglEfektif:one(M.tglEfektif),
   jabatan:one(M.disahkanJabatan)||m.jabatan,nama:one(M.disahkanNama)||m.nama,nip:one(M.disahkanNip)||m.nip,
   dasarHukum:ml(M.dasarHukum),kualifikasi:ml(M.kualifikasi),keterkaitan:ml(M.keterkaitan),peralatan:ml(M.peralatan),peringatan:ml(M.peringatan),pencatatan:ml(M.pencatatan)});
  m.extra={useESign:M.useESign||'',tteKode:M.tteKode||'',ttePenyelenggara:M.ttePenyelenggara||'',instansi:M.instansi||''};
