@@ -445,7 +445,7 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
   <div class="fmt">
    <label><input type="radio" name="bFmt" value="pdf" checked> <b>📄 PDF</b><small>Semua SOP terpilih dalam satu kali cetak (Simpan sebagai PDF). Setiap SOP dimulai di halaman baru, lengkap dengan garis bagan alir.</small>
     <span style="display:flex;gap:14px;margin-top:8px;font-size:14px"><span><input type="checkbox" id="bIdent" checked> Lembar Identitas</span><span><input type="checkbox" id="bAlir" checked> Bagan Alir</span></span></label>
-   <label><input type="radio" name="bFmt" value="xlsx"> <b>📊 Excel (.xlsx)</b><small>Satu file Excel: sheet <b>Pustaka</b> (daftar SOP, rekap per unit, daftar dasar hukum) + satu sheet untuk setiap SOP yang dipilih.</small></label>
+   <label><input type="radio" name="bFmt" value="xlsx"> <b>📊 Excel (.xlsx)</b><small>Satu file Excel: sheet <b>Pustaka</b> (daftar SOP, rekap per unit, daftar dasar hukum) + satu sheet untuk setiap SOP yang dipilih, tampilannya sama dengan PDF (simbol &amp; garis panah bisa diedit di Excel).</small></label>
   </div>
   <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
    <button class="btn" id="bCancel">Tutup</button>
@@ -885,7 +885,7 @@ const XL=(()=>{
  const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
  function zip(files){const parts=[],cd=[];let off=0;const d=new Date();
   const tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
-  for(const f of files){const nm=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+  for(const f of files){const nm=enc.encode(f.name),data=typeof f.data==='string'?enc.encode(f.data):f.data,crc=crc32(data);
    const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);
    h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);parts.push(new Uint8Array(h.buffer),nm,data);
    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);
@@ -897,20 +897,21 @@ const XL=(()=>{
  const col=n=>{let s='';n++;while(n){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
  const ref=(r,c)=>col(c)+(r+1);
  /* gaya: [font,fill,border,horizontal,vertical,wrap] */
- const S={def:0,title:1,sub:2,hd:3,td:4,tdc:5,ms:6,pr:7,kp:8,dk:9,lbl:10,link:11,sec:12,note:13,judul:14,tdtop:15,num:16};
+ const S={def:0,title:1,sub:2,hd:3,td:4,tdc:5,ms:6,pr:7,kp:8,dk:9,lbl:10,link:11,sec:12,note:13,judul:14,tdtop:15,num:16,xTitle:17,xSub:18,xHd:19,xTd:20,xTdc:21,xConn:22,xBox:23,xFoot:24,xLbl:25};
  const XF=[[0,0,0],[2,0,0,'center','center'],[3,0,0,'center','center',1],[1,2,1,'center','center',1],[0,0,1,'left','center',1],[0,0,1,'center','center',1],
   [4,3,1,'center','center',1],[5,4,1,'center','center',1],[7,5,1,'center','center',1],[1,6,1,'center','center',1],[1,7,1,'left','top',1],[6,0,1,'left','center',1],
-  [4,3,1,'left','center'],[3,0,0,'left','top',1],[1,0,0,'center','center',1],[0,0,1,'left','top',1],[0,0,1,'center','top',1]];
+  [4,3,1,'left','center'],[3,0,0,'left','top',1],[1,0,0,'center','center',1],[0,0,1,'left','top',1],[0,0,1,'center','top',1],
+  [10,0,0,'center','center'],[8,0,0,'center','center',1],[9,9,2,'center','center',1],[8,0,2,'left','center',1],[8,0,2,'center','center',1],[11,0,2,'center','center',1],[8,0,2,'left','top',1],[12,0,0,'right','center'],[8,0,2,'left','center',1]];
  const fill=c=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${c}"/><bgColor indexed="64"/></patternFill></fill>`;
  const font=(b,sz,c,o='')=>`<font>${b?'<b/>':''}${o}<sz val="${sz}"/><color rgb="FF${c}"/><name val="Arial"/></font>`;
  const STY=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="8">${font(0,10,'16263A')}${font(1,10,'16263A')}${font(1,15,'0B5D8F')}${font(0,10,'5B6B7F','<i/>')}${font(1,10,'FFFFFF')}${font(1,10,'0B5D8F')}${font(0,10,'1683C4','<u/>')}${font(1,10,'BE185D')}</fonts>
-<fills count="9"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${['E4F3FC','0B5D8F','DCEFFB','FDE7F1','F1ECFB','F4F8FC','0B5D8F'].map(fill).join('')}</fills>
-<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border>${['left','right','top','bottom'].map(s=>`<${s} style="thin"><color rgb="FF5B6B7F"/></${s}>`).join('')}<diagonal/></border></borders>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="13">${font(0,10,'16263A')}${font(1,10,'16263A')}${font(1,15,'0B5D8F')}${font(0,10,'5B6B7F','<i/>')}${font(1,10,'FFFFFF')}${font(1,10,'0B5D8F')}${font(0,10,'1683C4','<u/>')}${font(1,10,'BE185D')}${font(0,8,'000000')}${font(1,8,'000000')}${font(1,11,'000000')}${font(0,7,'555555','<i/>')}${font(0,7,'555555')}</fonts>
+<fills count="10"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${['E4F3FC','0B5D8F','DCEFFB','FDE7F1','F1ECFB','F4F8FC','0B5D8F','E8F4FC'].map(fill).join('')}</fills>
+<borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border>${['5B6B7F','333333'].map(c=>`<border>${['left','right','top','bottom'].map(s=>`<${s} style="thin"><color rgb="FF${c}"/></${s}>`).join('')}<diagonal/></border>`).join('')}</borders>
 <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
 <cellXfs count="${XF.length}">${XF.map(([f,fl,b,h,v,w])=>`<xf numFmtId="0" fontId="${f}" fillId="${fl}" borderId="${b}" xfId="0"${f?' applyFont="1"':''}${fl?' applyFill="1"':''}${b?' applyBorder="1"':''}${h?` applyAlignment="1"><alignment horizontal="${h}" vertical="${v}"${w?' wrapText="1"':''}/></xf>`:'/>'}`).join('')}</cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
- class Sheet{constructor(name){this.name=name;this.cells={};this.merges=[];this.cols=[];this.ht={};this.links=[];this.footer='';this.breaks=[];this.titleRows=null}
+ class Sheet{constructor(name){this.name=name;this.cells={};this.merges=[];this.cols=[];this.ht={};this.links=[];this.footer='';this.breaks=[];this.titleRows=null;this.anchors=[];this.media=[];this.margins=null}
   set(r,c,v,s){(this.cells[r]??={})[c]={v,s}}
   merge(r1,c1,r2,c2,s){if(r1===r2&&c1===c2)return;for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++)if(!(this.cells[r]&&this.cells[r][c]))this.set(r,c,'',s);this.merges.push([r1,c1,r2,c2])}
   link(r,c,sheet){this.links.push([r,c,sheet])}
@@ -920,6 +921,7 @@ const XL=(()=>{
     const cs=Object.keys(R).map(Number).sort((a,b)=>a-b).map(c=>{const{v,s}=R[c];
      if(typeof v==='string'&&v&&!vspan.has(r)&&XF[s]&&XF[s][5]){let w=W(c);const e=span[r+':'+c];if(e!=null)for(let k=c+1;k<=e;k++)w+=W(k);const cpl=Math.max(4,w*0.95);
       const n=v.split('\n').reduce((a,l)=>a+Math.max(1,Math.ceil(l.length/cpl)),0);if(n>lines)lines=n}
+     if(v&&v.rich)return`<c r="${ref(r,c)}" s="${s}" t="inlineStr"><is>${v.rich.map(u=>`<r><rPr><rFont val="Arial"/>${u.b?'<b/>':''}<color rgb="FF${u.c||'000000'}"/><sz val="${u.sz||8}"/>${u.u?'<u/>':''}</rPr><t xml:space="preserve">${x(u.t)}</t></r>`).join('')}</is></c>`;
      return typeof v==='number'?`<c r="${ref(r,c)}" s="${s}"><v>${v}</v></c>`:`<c r="${ref(r,c)}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${x(v)}</t></is></c>`}).join('');
     const h=this.ht[r]||(lines>1?Math.min(409,lines*13+6):0);return`<row r="${r+1}"${h?` ht="${h}" customHeight="1"`:''}>${cs}</row>`}).join('');
    const q=n=>"'"+n.replace(/'/g,"''")+"'";
@@ -928,7 +930,7 @@ const XL=(()=>{
 <cols>${this.cols.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${rows}</sheetData>
 ${this.merges.length?`<mergeCells count="${this.merges.length}">${this.merges.map(([a,b,c,d])=>`<mergeCell ref="${ref(a,b)}:${ref(c,d)}"/>`).join('')}</mergeCells>`:''}
 ${this.links.length?`<hyperlinks>${this.links.map(([r,c,sh])=>`<hyperlink ref="${ref(r,c)}" location="${x(q(sh))}!A1" display="Buka sheet"/>`).join('')}</hyperlinks>`:''}
-<printOptions horizontalCentered="1"/><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>${this.footer?`<headerFooter><oddFooter>${x(this.footer)}</oddFooter></headerFooter>`:''}${this.breaks.length?`<rowBreaks count="${this.breaks.length}" manualBreakCount="${this.breaks.length}">${this.breaks.map(r=>`<brk id="${r}" max="16383" man="1"/>`).join('')}</rowBreaks>`:''}</worksheet>`}}
+<printOptions horizontalCentered="1"/>${this.margins?'<pageMargins left="0.39" right="0.39" top="0.39" bottom="0.39" header="0" footer="0"/>':'<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.6" header="0.3" footer="0.3"/>'}<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>${this.footer?`<headerFooter><oddFooter>${x(this.footer)}</oddFooter></headerFooter>`:''}${this.breaks.length?`<rowBreaks count="${this.breaks.length}" manualBreakCount="${this.breaks.length}">${this.breaks.map(r=>`<brk id="${r}" max="16383" man="1"/>`).join('')}</rowBreaks>`:''}${this.anchors.length?'<drawing r:id="rId1"/>':''}</worksheet>`}}
  function book(sheets){const ws=sheets.map((s,i)=>`<sheet name="${x(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('');
   const files=[{name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`},
@@ -941,42 +943,131 @@ ${this.links.length?`<hyperlinks>${this.links.map(([r,c,sh])=>`<hyperlink ref="$
    {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
    {name:'xl/styles.xml',data:STY}].concat(sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:s.xml()})));
+  sheets.forEach((s,i)=>{if(!s.anchors.length)return;const n=i+1,R='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+   files.push({name:`xl/worksheets/_rels/sheet${n}.xml.rels`,data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/drawing" Target="../drawings/drawing${n}.xml"/></Relationships>`});
+   files.push({name:`xl/drawings/drawing${n}.xml`,data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${R}">${s.anchors.join('')}</xdr:wsDr>`});
+   if(s.media.length){files.push({name:`xl/drawings/_rels/drawing${n}.xml.rels`,data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${s.media.map((m,k)=>`<Relationship Id="rIdImg${k+1}" Type="${R}/image" Target="../media/image${n}_${k+1}.png"/>`).join('')}</Relationships>`});
+    s.media.forEach((m,k)=>files.push({name:`xl/media/image${n}_${k+1}.png`,data:m}))}});
+  files[0].data=files[0].data.replace('<Default Extension="xml"','<Default Extension="png" ContentType="image/png"/><Default Extension="xml"').replace('</Types>',sheets.map((s,i)=>s.anchors.length?`<Override PartName="/xl/drawings/drawing${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>`:'').join('')+'</Types>');
   return zip(files)}
- return{S,Sheet,book}})();
+ return{S,Sheet,book,x}})();
 
 function xlSheetName(base,used){let n=String(base).replace(/[\[\]:*?\/\\]/g,'').replace(/\s+/g,' ').trim()||'SOP',k=2;if(n.length>31)n=n.slice(0,30).trim()+'…';
  while(used.has(n.toLowerCase())){const suf=` (${k++})`;n=n.slice(0,31-suf.length)+suf}used.add(n.toLowerCase());return n}
 const xlNum=t=>lines(t).map((v,i)=>`${i+1}. ${v}`).join('\n')||'-';
 const xlFooter=()=>`&R&8SOP-${DB.settings.instansi} · Halaman &P dari &N`;
 
-function xlSopSheet(s,name){const S=XL.S,sh=new XL.Sheet(name),m=s.meta,P=s.pelaksana.length?s.pelaksana:['Pelaksana'],n=P.length,last=n+5;
- sh.cols=[5,38,...P.map(()=>13),20,11,20,24];sh.footer=xlFooter();let r=0;
- const line=(v,st,h)=>{sh.set(r,0,v,st);sh.merge(r,0,r,last,st);if(h)sh.ht[r]=h;r++};
- const kv=(k,v)=>{sh.set(r,0,k,S.lbl);sh.merge(r,0,r,1,S.lbl);sh.set(r,2,v||'-',S.tdtop);sh.merge(r,2,r,last,S.tdtop);r++};
- line('STANDAR OPERASIONAL PROSEDUR ADMINISTRASI PEMERINTAHAN',S.title,24);
- line(m.judul||'(Judul SOP)',S.judul,20);
- line(`${DB.settings.instansi} · ${m.unit||'-'} · ${DB.settings.kabupaten}`,S.sub);r++;
- line('  LEMBAR IDENTITAS SOP',S.sec,18);
- kv('Nomor SOP',m.nomor);kv('Unit / Seksi',m.unit);kv('Tanggal Pembuatan',fmtTgl(m.tglBuat));kv('Tanggal Revisi',fmtTgl(m.tglRevisi));kv('Tanggal Efektif',fmtTgl(m.tglEfektif));
- kv('Disahkan oleh',`${m.jabatan||''}\n\n\n${m.nama||''}\nNIP ${m.nip||''}`);kv('Judul SOP',m.judul);
- kv('Dasar Hukum',xlNum(m.dasarHukum));kv('Kualifikasi Pelaksana',xlNum(m.kualifikasi));kv('Keterkaitan',xlNum(m.keterkaitan));kv('Peralatan / Perlengkapan',xlNum(m.peralatan));
- kv('Peringatan',lines(m.peringatan).join('\n'));kv('Pencatatan dan Pendataan',lines(m.pencatatan).join('\n'));r++;
- sh.breaks.push(r);line('  BAGAN ALIR SOP',S.sec,18);
- const a=r,b=r+1;sh.titleRows=[a+1,b+1];
- sh.set(a,0,'No',S.hd);sh.merge(a,0,b,0,S.hd);sh.set(a,1,'Kegiatan',S.hd);sh.merge(a,1,b,1,S.hd);
- sh.set(a,2,'Pelaksana',S.hd);sh.merge(a,2,a,n+1,S.hd);P.forEach((p,i)=>sh.set(b,2+i,p,S.hd));
- sh.set(a,n+2,'Mutu Baku',S.hd);sh.merge(a,n+2,a,n+4,S.hd);['Kelengkapan','Waktu','Output'].forEach((v,i)=>sh.set(b,n+2+i,v,S.hd));
- sh.set(a,n+5,'Ket',S.hd);sh.merge(a,n+5,b,n+5,S.hd);sh.ht[a]=18;sh.ht[b]=30;r+=2;
- const ST={mulai:S.ms,selesai:S.ms,keputusan:S.kp,dokumen:S.dk,proses:S.pr};
- s.steps.forEach((st,i)=>{const all=[st.pelaksana,...(st.bersama||[])],t=st.tidakKe?s.steps.findIndex(y=>y.id===st.tidakKe):-1;
-  const lab=st.tipe==='mulai'?'Mulai':st.tipe==='selesai'?'Selesai':st.tipe==='keputusan'?`◇ ${i+1}`+(t>=0?`\nTidak → ${t+1}`:''):st.tipe==='dokumen'?`▱ ${i+1}`:`▭ ${i+1}`;
-  sh.set(r,0,i+1,S.tdc);sh.set(r,1,st.kegiatan,S.td);P.forEach((p,j)=>sh.set(r,2+j,all.includes(p)?lab:'',all.includes(p)?ST[st.tipe]||S.pr:S.tdc));
-  sh.set(r,n+2,st.kelengkapan,S.tdc);sh.set(r,n+3,st.waktu,S.tdc);sh.set(r,n+4,st.output,S.tdc);sh.set(r,n+5,st.ket,S.tdc);
-  if(!sh.ht[r])sh.ht[r]=0;r++});
- if(!s.steps.length){sh.set(r,0,'Belum ada langkah kegiatan.',S.tdc);sh.merge(r,0,r,last,S.tdc);r++}
- r++;sh.set(r,0,'Keterangan simbol: Mulai / Selesai (biru tua) · ▭ Proses (biru muda) · ◇ Keputusan (pink) — Ya: lanjut ke langkah berikutnya, Tidak: kembali ke langkah yang disebut · ▱ Dokumen (ungu) · Simbol bernomor sama di beberapa kolom = kegiatan dikerjakan bersama. Bagan alir lengkap dengan garis penghubung tersedia pada versi PDF.',S.note);
- sh.merge(r,0,r,last,S.note);sh.ht[r]=30;
- return sh}
+/* Sheet SOP di Excel dibuat meniru hasil PDF: posisi diukur dari tampilan cetak, lalu
+   tabel → sel Excel, simbol & garis panah → shape Excel (bisa diedit), logo → gambar. */
+const XE=v=>Math.max(0,Math.round(v*9525));
+function xlPng(src,w,h){return new Promise(res=>{const im=new Image();im.onload=()=>{try{const k=4,c=document.createElement('canvas');c.width=Math.max(8,Math.round(w*k));c.height=Math.max(8,Math.round(h*k));
+ const nw=im.naturalWidth||w,nh=im.naturalHeight||h,s=Math.min(c.width/nw,c.height/nh),dw=nw*s,dh=nh*s;c.getContext('2d').drawImage(im,(c.width-dw)/2,(c.height-dh)/2,dw,dh);
+ const b=atob(c.toDataURL('image/png').split(',')[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);res(u)}catch(e){res(null)}};im.onerror=()=>res(null);im.src=src})}
+function xlPathPts(d){const t=String(d).match(/[MHVL]|-?\d+(?:\.\d+)?/g)||[],p=[];let x=0,y=0,c='',i=0;
+ while(i<t.length){if(/[MHVL]/.test(t[i])){c=t[i++];continue}if(c==='M'||c==='L'){x=+t[i++];y=+t[i++]}else if(c==='H')x=+t[i++];else if(c==='V')y=+t[i++];else{i++;continue}p.push([x,y])}return p}
+
+async function xlSopSheet(s,name,per){const S=XL.S,X=XL.x,sh=new XL.Sheet(name),st=DB.settings;sh.margins=true;
+ const M=document.createElement('div');M.style.cssText='position:absolute;left:-99999px;top:0';document.body.appendChild(M);
+ try{
+ renderDoc(M,s,{ident:true,alir:true,per:per||0,legend:true});
+ await Promise.all([...M.querySelectorAll('img')].map(i=>i.decode?i.decode().catch(()=>{}):0));
+ const R=e=>e.getBoundingClientRect(),flows=[...M.querySelectorAll('.sheet.flow')],ident=M.querySelector('.sheet.ident'),total=1+flows.length;
+ /* kolom = kolom tabel bagan alir (sama persis dengan PDF) */
+ const t0=flows[0].querySelector('table.ft'),T0=R(t0),h1=[...t0.tHead.rows[0].cells],h2=[...t0.tHead.rows[1].cells];
+ const xs=[R(h1[0]).left,R(h1[0]).right,R(h1[1]).right,...h2.map(c=>R(c).right),R(h1[h1.length-1]).right].map(v=>v-T0.left);
+ const colPx=xs.slice(1).map((v,i)=>v-xs[i]),N=colPx.length,last=N-1,P=s.pelaksana.length?s.pelaksana:['Pelaksana'],L=P.length;
+ sh.cols=colPx.map(p=>+(p/7).toFixed(4));
+ const cum=[0];colPx.forEach(p=>cum.push(cum[cum.length-1]+p));
+ const rowPx=[],add=h=>{rowPx.push(Math.max(2,h));return rowPx.length-1};
+ const items=[];let id=2;
+ const near=xv=>{let b=1,d=1e9;for(let i=1;i<N;i++){const dd=Math.abs(cum[i]-xv);if(dd<d){d=dd;b=i}}return b};
+ const heights=els=>els.map((e,i)=>i+1<els.length?R(els[i+1]).top-R(e).top:R(e).height);
+ const span=(r,c1,c2,v,sty)=>{sh.set(r,c1,v,sty);sh.merge(r,c1,r,c2,sty)};
+ const listRich=(h,txt,num)=>{const a=lines(txt);return{rich:[{t:h+'\n',b:1},{t:a.length?a.map((v,i)=>(num?`${i+1}. `:'')+v).join('\n'):'-'}]}};
+ const foot=n=>`SOP-${st.instansi} · Halaman ${n} dari ${total}`;
+
+ /* ---------- LEMBAR IDENTITAS ---------- */
+ {const IR=R(ident),tit=ident.querySelector('.id-title'),sub=ident.querySelector('.id-sub'),idt=ident.querySelector('.idt'),idt2=ident.querySelector('.idt2'),TI=R(idt);
+  const b1=near(R(idt.querySelector('.id-logo')).right-TI.left);let b2=near(R(idt.rows[0].cells[1]).right-TI.left);if(b2<=b1)b2=Math.min(last,b1+1);
+  let mid=near(R(idt2.rows[0].cells[0]).right-TI.left);
+  let r=add(R(sub).top-R(tit).top);span(r,0,last,'LEMBAR IDENTITAS SOP',S.xTitle);
+  r=add(TI.top-R(sub).top);span(r,0,last,s.meta.judul||'(Judul SOP)',S.xSub);
+  const trs=[...idt.rows,...idt2.rows],hs=heights(trs);hs[5]=R(idt2.rows[0]).top-R(idt.rows[5]).top;hs[hs.length-1]=R(idt2).bottom-R(trs[trs.length-1]).top;
+  const r0=rowPx.length;hs.forEach(h=>add(h));const m=s.meta;
+  sh.set(r0,0,'',S.xBox);sh.merge(r0,0,r0+5,b1-1,S.xBox);
+  const rows=[['Nomor SOP',m.nomor||'-'],['Tanggal Pembuatan',fmtTgl(m.tglBuat)],['Tanggal Revisi',fmtTgl(m.tglRevisi)],['Tanggal Efektif',fmtTgl(m.tglEfektif)],
+   ['Disahkan oleh',{rich:[{t:`${m.jabatan||''}\n\n\n`},{t:m.nama||'',b:1,u:1},{t:`\nNIP ${m.nip||''}`}]}],['Judul SOP',m.judul||'-']];
+  rows.forEach(([k,v],i)=>{span(r0+i,b1,b2-1,k,S.xLbl);span(r0+i,b2,last,v,i===4?S.xBox:S.xLbl)});
+  const sec=[['DASAR HUKUM',m.dasarHukum,1,'KUALIFIKASI PELAKSANA',m.kualifikasi,1],['KETERKAITAN',m.keterkaitan,1,'PERALATAN/PERLENGKAPAN',m.peralatan,1],['PERINGATAN',m.peringatan,0,'PENCATATAN DAN PENDATAAN',m.pencatatan,0]];
+  sec.forEach((q,i)=>{span(r0+6+i,0,mid-1,listRich(q[0],q[1],q[2]),S.xBox);span(r0+6+i,mid,last,listRich(q[3],q[4],q[5]),S.xBox)});
+  r=add(IR.bottom-R(idt2).bottom);span(r,0,last,foot(1),S.xFoot);
+  /* logo + nama instansi di kotak kiri, diposisikan seperti PDF */
+  const img=idt.querySelector('.id-logo img'),y0=()=>rowPx.slice(0,r0).reduce((a,b)=>a+b,0);
+  const cx=cum[b1]/2,lt=R(idt.querySelector('.id-logo')),dy=v=>y0()+(v-TI.top);
+  if(img){const I=R(img),png=await xlPng(img.src,I.width,I.height);if(png){sh.media.push(png);items.push({k:'pic',x:cx-I.width/2,y:dy(I.top),w:I.width,h:I.height,n:sh.media.length})}}
+  idt.querySelectorAll('.id-logo .b').forEach(b=>{const B=R(b);items.push({k:'txt',x:cum[0]+2,y:dy(B.top),w:cum[b1]-4,h:B.height,t:b.textContent,sz:850,b:1,al:'ctr'})});
+ }
+
+ /* ---------- BAGAN ALIR (per halaman, sama dengan PDF) ---------- */
+ const SH={mulai:['roundRect',50000,'0B5D8F','0B5D8F','FFFFFF',700],selesai:['roundRect',50000,'0B5D8F','0B5D8F','FFFFFF',700],proses:['roundRect',12000,'E4F3FC','0B5D8F','0B5D8F',800],
+  keputusan:['diamond',0,'FDE7F1','DB2777','16263A',800],dokumen:['flowChartDocument',0,'F1ECFB','7C5CC4','16263A',800],off:['flowChartOffpageConnector',0,'FFFFFF','0B5D8F','0B5D8F',750]};
+ flows.forEach((F,p)=>{sh.breaks.push(rowPx.length);
+  const tt=F.querySelector('.pg-title'),ss=F.querySelector('.pg-sub'),W=F.querySelector('.flowwrap'),WR=R(W),tb=W.querySelector('table'),FR=R(F);
+  let r=add(R(ss).top-R(tt).top);span(r,0,last,'BAGAN ALIR SOP',S.xTitle);
+  r=add(WR.top-R(ss).top);span(r,0,last,ss.textContent,S.xSub);
+  const trs=[...tb.rows],hs=heights(trs);hs[hs.length-1]=R(tb).bottom-R(trs[trs.length-1]).top;
+  const rT=rowPx.length;hs.forEach(h=>add(h));
+  const a=rT,b=rT+1;
+  sh.set(a,0,'No',S.xHd);sh.merge(a,0,b,0,S.xHd);sh.set(a,1,'Kegiatan',S.xHd);sh.merge(a,1,b,1,S.xHd);
+  span(a,2,L+1,'Pelaksana',S.xHd);P.forEach((q,i)=>sh.set(b,2+i,q,S.xHd));
+  span(a,L+2,L+4,'Mutu Baku',S.xHd);['Kelengkapan','Waktu','Output'].forEach((q,i)=>sh.set(b,L+2+i,q,S.xHd));
+  sh.set(a,L+5,'Ket',S.xHd);sh.merge(a,L+5,b,L+5,S.xHd);
+  trs.slice(2).forEach((tr,i)=>{const rr=rT+2+i;
+   if(tr.classList.contains('conn')){for(let c=0;c<N;c++)sh.set(rr,c,c===1?tr.cells[1].textContent:'',c===1?S.xConn:S.xTdc);return}
+   if(tr.dataset.g==null){span(rr,0,last,tr.textContent.trim(),S.xTdc);return}
+   const g=+tr.dataset.g,q=s.steps[g];
+   sh.set(rr,0,g+1,S.xTdc);sh.set(rr,1,q.kegiatan,S.xTd);for(let c=0;c<L;c++)sh.set(rr,2+c,'',S.xTdc);
+   sh.set(rr,L+2,q.kelengkapan,S.xTdc);sh.set(rr,L+3,q.waktu,S.xTdc);sh.set(rr,L+4,q.output,S.xTdc);sh.set(rr,L+5,q.ket,S.xTdc)});
+  r=add(FR.bottom-R(tb).bottom);span(r,0,last,foot(p+2),S.xFoot);
+  const top=rowPx.slice(0,rT).reduce((u,v)=>u+v,0),X0=WR.left,Y0=WR.top,tx=v=>v-X0,ty=v=>top+(v-Y0);
+  /* simbol */
+  W.querySelectorAll('.shp').forEach(e=>{const g=+e.dataset.g,q=s.steps[g],B=R(e.firstElementChild);
+   items.push({k:'shape',t:q.tipe,x:tx(B.left)+.7,y:ty(B.top)+.7,w:B.width-1.4,h:B.height-1.4,txt:q.tipe==='mulai'?'Mulai':q.tipe==='selesai'?'Selesai':String(g+1)})});
+  W.querySelectorAll('.off').forEach(e=>{const B=R(e.firstElementChild);items.push({k:'shape',t:'off',x:tx(B.left)+.7,y:ty(B.top)+.7,w:B.width-1.4,h:B.height-1.4,txt:e.textContent.trim()})});
+  /* garis & panah */
+  const sv=W.querySelector('svg.links');
+  sv.querySelectorAll(':scope>path').forEach(pa=>{const pts=xlPathPts(pa.getAttribute('d')).map(([u,v])=>[u,top+v]);if(pts.length<2)return;
+   const col=(pa.getAttribute('stroke')||'#0b5d8f').replace('#','').toUpperCase();items.push({k:'line',pts,col,arrow:pa.hasAttribute('marker-end'),w:+(pa.getAttribute('stroke-width')||1.3)})});
+  sv.querySelectorAll(':scope>circle').forEach(c=>{const r2=+c.getAttribute('r'),cx=+c.getAttribute('cx'),cy=top+ +c.getAttribute('cy');items.push({k:'ell',x:cx-r2,y:cy-r2,w:2*r2,h:2*r2,col:(c.getAttribute('stroke')||'#be123c').replace('#','').toUpperCase()})});
+  sv.querySelectorAll(':scope>text').forEach(e=>{const B=R(e),col=(e.getAttribute('fill')||'#0b5d8f').replace('#','').toUpperCase();
+   items.push({k:'txt',x:tx(B.left)-2,y:ty(B.top)-1,w:B.width+4,h:B.height+2,t:e.textContent,sz:700,b:1,c:col,al:'ctr'})});
+  /* legenda simbol */
+  const LG=['mulai','proses','keputusan','dokumen','off'];
+  F.querySelectorAll('.legend>span').forEach((sp,i)=>{const sg=sp.querySelector('svg');if(!sg)return;const B=R(sg),Sx=R(sp);
+   items.push({k:'shape',t:LG[i]||'proses',x:tx(B.left)+.5,y:ty(B.top)+.5,w:B.width-1,h:B.height-1,txt:i===0?'Mulai':'',mini:1});
+   items.push({k:'txt',x:tx(B.right)+3,y:ty(Sx.top),w:Sx.right-B.right,h:Sx.height,t:[...sp.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim(),sz:650,b:0,c:'555555',al:'l'})});
+ });
+ sh.rowPx=rowPx;sh.cum=cum;
+ /* ---------- tulis shape ke DrawingML ---------- */
+ const rc=[0];rowPx.forEach(h=>rc.push(rc[rc.length-1]+h));
+ rowPx.forEach((h,i)=>sh.ht[i]=+(h*0.75).toFixed(2));
+ const pos=(xv,yv)=>{let c=0;while(c<N-1&&cum[c+1]<=xv)c++;let r=0;while(r<rowPx.length-1&&rc[r+1]<=yv)r++;
+  return`<xdr:col>${c}</xdr:col><xdr:colOff>${XE(Math.min(xv-cum[c],colPx[c]))}</xdr:colOff><xdr:row>${r}</xdr:row><xdr:rowOff>${XE(Math.min(yv-rc[r],rowPx[r]))}</xdr:rowOff>`};
+ const anc=(x1,y1,x2,y2,inner)=>`<xdr:twoCellAnchor editAs="oneCell"><xdr:from>${pos(x1,y1)}</xdr:from><xdr:to>${pos(x2,y2)}</xdr:to>${inner}<xdr:clientData/></xdr:twoCellAnchor>`;
+ const xf=(x1,y1,w,h)=>`<a:xfrm><a:off x="${XE(x1)}" y="${XE(y1)}"/><a:ext cx="${Math.max(1,XE(w))}" cy="${Math.max(1,XE(h))}"/></a:xfrm>`;
+ const tb=(t,sz,b,c,al)=>`<xdr:txBody><a:bodyPr vertOverflow="overflow" horzOverflow="overflow" wrap="none" lIns="0" tIns="0" rIns="0" bIns="0" anchor="ctr"/><a:lstStyle/><a:p><a:pPr algn="${al||'ctr'}"/><a:r><a:rPr lang="id-ID" sz="${sz}" b="${b?1:0}"><a:solidFill><a:srgbClr val="${c}"/></a:solidFill><a:latin typeface="Arial"/><a:cs typeface="Arial"/></a:rPr><a:t>${X(t)}</a:t></a:r></a:p></xdr:txBody>`;
+ const nv=(n,box)=>`<xdr:nvSpPr><xdr:cNvPr id="${id}" name="${n} ${id++}"/><xdr:cNvSpPr${box?' txBox="1"':''}/></xdr:nvSpPr>`;
+ items.forEach(it=>{
+  if(it.k==='shape'){const[g,adj,fl,ln,tc,sz]=SH[it.t]||SH.proses;
+   sh.anchors.push(anc(it.x,it.y,it.x+it.w,it.y+it.h,`<xdr:sp macro="" textlink="">${nv('Simbol')}<xdr:spPr>${xf(it.x,it.y,it.w,it.h)}<a:prstGeom prst="${g}"><a:avLst>${adj?`<a:gd name="adj" fmla="val ${adj}"/>`:''}</a:avLst></a:prstGeom><a:solidFill><a:srgbClr val="${fl}"/></a:solidFill><a:ln w="${it.mini?6350:12700}"><a:solidFill><a:srgbClr val="${ln}"/></a:solidFill></a:ln></xdr:spPr>${it.txt?tb(it.txt,it.mini?500:sz,1,tc):''}</xdr:sp>`))}
+  else if(it.k==='line'){const xs2=it.pts.map(q=>q[0]),ys2=it.pts.map(q=>q[1]),x1=Math.min(...xs2),y1=Math.min(...ys2),w=Math.max(...xs2)-x1,h=Math.max(...ys2)-y1,W2=Math.max(1,XE(w)),H2=Math.max(1,XE(h));
+   const pt=q=>`<a:pt x="${XE(q[0]-x1)}" y="${XE(q[1]-y1)}"/>`;
+   sh.anchors.push(anc(x1,y1,x1+w,y1+h,`<xdr:sp macro="" textlink="">${nv('Garis')}<xdr:spPr>${xf(x1,y1,w,h)}<a:custGeom><a:avLst/><a:gdLst/><a:ahLst/><a:cxnLst/><a:rect l="0" t="0" r="r" b="b"/><a:pathLst><a:path w="${W2}" h="${H2}" fill="none"><a:moveTo>${pt(it.pts[0])}</a:moveTo>${it.pts.slice(1).map(q=>`<a:lnTo>${pt(q)}</a:lnTo>`).join('')}</a:path></a:pathLst></a:custGeom><a:noFill/><a:ln w="${Math.round(it.w*9525)}"><a:solidFill><a:srgbClr val="${it.col}"/></a:solidFill><a:round/>${it.arrow?'<a:tailEnd type="triangle" w="sm" len="sm"/>':''}</a:ln></xdr:spPr></xdr:sp>`))}
+  else if(it.k==='ell')sh.anchors.push(anc(it.x,it.y,it.x+it.w,it.y+it.h,`<xdr:sp macro="" textlink="">${nv('Lingkaran')}<xdr:spPr>${xf(it.x,it.y,it.w,it.h)}<a:prstGeom prst="ellipse"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="12700"><a:solidFill><a:srgbClr val="${it.col}"/></a:solidFill></a:ln></xdr:spPr></xdr:sp>`));
+  else if(it.k==='txt')sh.anchors.push(anc(it.x,it.y,it.x+it.w,it.y+it.h,`<xdr:sp macro="" textlink="">${nv('Teks',1)}<xdr:spPr>${xf(it.x,it.y,it.w,it.h)}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></xdr:spPr>${tb(it.t,it.sz,it.b,it.c||'000000',it.al)}</xdr:sp>`));
+  else if(it.k==='pic')sh.anchors.push(anc(it.x,it.y,it.x+it.w,it.y+it.h,`<xdr:pic><xdr:nvPicPr><xdr:cNvPr id="${id}" name="Logo ${id++}"/><xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr></xdr:nvPicPr><xdr:blipFill><a:blip r:embed="rIdImg${it.n}"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill><xdr:spPr>${xf(it.x,it.y,it.w,it.h)}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr></xdr:pic>`));
+ });
+ return sh}finally{M.remove()}}
 
 function xlPustaka(list,names){const S=XL.S,sh=new XL.Sheet('Pustaka');sh.cols=[5,26,46,30,15,15,15,10,10];sh.footer=xlFooter();const last=8;let r=0;
  const line=(v,st,h)=>{sh.set(r,0,v,st);sh.merge(r,0,r,last,st);if(h)sh.ht[r]=h;r++};
@@ -998,9 +1089,10 @@ function xlPustaka(list,names){const S=XL.S,sh=new XL.Sheet('Pustaka');sh.cols=[
  [...reg.values()].forEach((v,i)=>{sh.set(r,0,i+1,S.num);sh.set(r,1,v.t,S.tdtop);sh.merge(r,1,r,5,S.tdtop);sh.set(r,6,[...v.u].join('\n'),S.tdtop);sh.merge(r,6,r,8,S.tdtop);r++});
  return sh}
 
-function exportExcel(list,fname){if(!list.length)return toast('Pilih minimal satu SOP',true);
+async function exportExcel(list,fname,o={}){if(!list.length)return toast('Pilih minimal satu SOP',true);
  const used=new Set(['pustaka']),names=list.map((s,i)=>xlSheetName(`${i+1}. ${s.meta.judul||'SOP tanpa judul'}`,used));
- const sheets=[xlPustaka(list,names),...list.map((s,i)=>xlSopSheet(s,names[i]))];
+ toast('Menyiapkan Excel…');const sheets=[xlPustaka(list,names)];
+ for(let i=0;i<list.length;i++)sheets.push(await xlSopSheet(list[i],names[i],o.per||0));
  const blob=XL.book(sheets),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
  toast(`Excel disimpan: ${list.length} SOP + sheet Pustaka`)}
 
@@ -1030,7 +1122,7 @@ $('#bGo').onclick=()=>{const list=[...DB.sops].filter(s=>bSel.has(s.id)).sort((a
 function printMany(list,o){const P=$('#printArea');P.innerHTML=list.map(()=>'<div class="docset"></div>').join('');
  [...P.children].forEach((d,i)=>renderDoc(d,list[i],o));const old=document.title;document.title=`SOP ${DB.settings.instansi} (${list.length} SOP)`;
  setTimeout(()=>{window.print();document.title=old},200)}
-$('#btnXls').onclick=$('#btnXls2').onclick=()=>{const s=getSop();if(s)exportExcel([s],'SOP-'+safeName(s.meta.judul).replace(/\s+/g,'-')+'.xlsx')};
+$('#btnXls').onclick=$('#btnXls2').onclick=()=>{const s=getSop();if(s)exportExcel([s],'SOP-'+safeName(s.meta.judul).replace(/\s+/g,'-')+'.xlsx',{per:+$('#pPer').value})};
 
 /* settings */
 let tmpLogo='';
