@@ -202,6 +202,20 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
 .idt2 p{margin:0 0 3px}
 
 #printArea{position:absolute;left:-99999px;top:0}
+.bulk-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 8px}
+.bulk-tools .inp{flex:1;min-width:180px}
+.blist{border:1px solid var(--line);border-radius:12px;max-height:44vh;overflow:auto;background:#fafcfe}
+.blist label{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.blist label:last-child{border-bottom:0}
+.blist label:hover{background:var(--teal3)}
+.blist input{margin-top:3px;accent-color:#ec4899;width:17px;height:17px}
+.blist .bn{font-size:12px;color:var(--mut);font-family:Consolas,monospace}
+.fmt{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.fmt label{border:2px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:block}
+.fmt label:has(input:checked){border-color:#ec4899;background:var(--gold2)}
+.fmt input{accent-color:#ec4899}
+.fmt label>b{font-size:15px}.fmt small{display:block;color:var(--mut);margin-top:3px}
+@media(max-width:600px){.fmt{grid-template-columns:1fr}}
 #measure{position:absolute;left:-99999px;top:0;visibility:hidden}
 
 @page{size:A4 landscape;margin:0}
@@ -210,7 +224,7 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
  body>*:not(#printArea){display:none!important}
  #printArea{position:static;left:0}
  .sheet{box-sizing:border-box;width:297mm;padding:10mm;page-break-after:always;break-after:page}
- .sheet:last-child{page-break-after:auto;break-after:auto}
+ #printArea>.sheet:last-child,#printArea>.docset:last-child>.sheet:last-child{page-break-after:auto;break-after:auto}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
@@ -241,7 +255,8 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
     <button class="btn gold" id="btnNew">＋ SOP Baru</button>
     <button class="btn ghost" id="btnOpen" title="Bisa pilih banyak file sekaligus: CSV dari Portal SOP / SOP-AP, file .sop.json, atau file Backup">📂 Buka / Impor File (.csv / .json)</button>
     <button class="btn ghost" id="btnBackup">💾 Backup Semua</button>
-    <button class="btn ghost" id="btnRegCsv">📊 Ekspor Daftar SOP (Excel/CSV)</button>
+    <button class="btn gold" id="btnBulk">🖨 Cetak / Ekspor Banyak (PDF · Excel)</button>
+    <button class="btn ghost" id="btnRegCsv">📊 Ekspor Daftar SOP (CSV)</button>
    </div>
   </div>
 
@@ -255,6 +270,7 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
     <button class="btn ghost" id="btnSaveCsv">⬇ Simpan CSV (format Portal SOP)</button>
     <button class="btn ghost" id="btnDup">⧉ Duplikat</button>
     <button class="btn gold" id="btnPrint">🖨 Cetak / Simpan PDF</button>
+    <button class="btn ghost" id="btnXls">📊 Simpan Excel</button>
    </div>
    <div class="hint">Kertas cetak: <b>A4 lanskap</b> — bagan otomatis dipecah per halaman dengan konektor segilima penyambung halaman.</div>
   </div>
@@ -403,6 +419,7 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
      </select></label>
     <label><input type="checkbox" id="pLegend" checked> Tampilkan keterangan simbol</label>
     <button class="btn gold" id="btnPrint2">🖨 Cetak / Simpan PDF</button>
+    <button class="btn pri" id="btnXls2">📊 Simpan Excel (.xlsx)</button>
    </div>
    <div class="muted" style="margin-top:8px">Di jendela cetak pilih <b>Save as PDF</b>, kertas <b>A4</b>, orientasi <b>Lanskap</b>, margin <b>Default/None</b>, skala 100%, dan aktifkan <b>Background graphics</b>. Tanggal, judul &amp; alamat file browser otomatis tidak ikut tercetak (jika masih muncul, hilangkan centang <b>Headers and footers</b>).</div>
   </div>
@@ -414,6 +431,28 @@ table.ft tr.conn td{height:30px;border-top-style:dashed;border-bottom-style:dash
 <div id="splash"><div class="lg" id="spLogo"></div><div class="ld"><i></i></div></div>
 
 <!-- MODAL PENGATURAN -->
+<div class="modal hidden" id="mBulk">
+ <div class="box" style="max-width:820px">
+  <h3>Cetak / Ekspor Banyak SOP</h3>
+  <div class="muted">Centang SOP yang mau dicetak, pilih format, lalu klik tombol di bawah.</div>
+  <div class="bulk-tools">
+   <input class="inp" id="bQ" placeholder="🔍 Cari judul / nomor…">
+   <select class="inp" id="bSeksi" style="max-width:260px"></select>
+   <button class="btn sm" id="bAll">Pilih semua</button><button class="btn sm" id="bNone">Kosongkan</button>
+  </div>
+  <div class="blist" id="bList"></div>
+  <div class="muted" id="bCount" style="margin-top:6px"></div>
+  <div class="fmt">
+   <label><input type="radio" name="bFmt" value="pdf" checked> <b>📄 PDF</b><small>Semua SOP terpilih dalam satu kali cetak (Simpan sebagai PDF). Setiap SOP dimulai di halaman baru, lengkap dengan garis bagan alir.</small>
+    <span style="display:flex;gap:14px;margin-top:8px;font-size:14px"><span><input type="checkbox" id="bIdent" checked> Lembar Identitas</span><span><input type="checkbox" id="bAlir" checked> Bagan Alir</span></span></label>
+   <label><input type="radio" name="bFmt" value="xlsx"> <b>📊 Excel (.xlsx)</b><small>Satu file Excel: sheet <b>Pustaka</b> (daftar SOP, rekap per unit, daftar dasar hukum) + satu sheet untuk setiap SOP yang dipilih.</small></label>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
+   <button class="btn" id="bCancel">Tutup</button>
+   <button class="btn gold" id="bGo">🖨 Cetak PDF</button>
+  </div>
+ </div>
+</div>
 <div class="modal hidden" id="mSet">
  <div class="box">
   <h3>Pengaturan Instansi</h3>
@@ -525,7 +564,7 @@ const DEF_DASAR=[
  'Susunan Organisasi, Tugas dan Fungsi Serta Tata Kerja Kecamatan dan Kelurahan Kabupaten Indragiri Hulu'
 ].join('\n');
 const DEF_SETTINGS={instansi:'Kecamatan Sungai Lala',kabupaten:'Kabupaten Indragiri Hulu',jabatan:'Camat Sungai Lala',nama:'Zeris Anshory, S.E',nip:'19791217 201102 1 001',klasifikasi:'000.8.3.3',kode:'KecSL',
- seksi:['Sekretariat','Seksi Pemerintahan','Seksi Ketentraman dan Ketertiban Umum','Seksi Pemberdayaan Masyarakat dan Desa','Seksi Kesejahteraan Sosial','Seksi Pelayanan Umum'],logo:''};
+ seksi:['Seksi Pemerintahan','Seksi Pembangunan','Seksi Pemberdayaan Masyarakat','Seksi Pelayanan Umum','Seksi Ketentraman dan Ketertiban Umum','Sub Bagian Umum','Sub Bagian Program dan Keuangan'],seksiVer:2,logo:''};
 const WAKTU=['5 Menit','10 Menit','15 Menit','20 Menit','30 Menit','1 Jam','2 Jam','1 Hari'];
 const TIPE={mulai:'Mulai',proses:'Proses',keputusan:'Keputusan',dokumen:'Dokumen',selesai:'Selesai'};
 
@@ -537,11 +576,12 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 const fmtTgl=s=>{if(!s)return '-';const[y,m,d]=s.split('-');return (+d)+' '+BULAN[+m-1]+' '+y};
 const L=i=>String.fromCharCode(65+(i%26))+(i>=26?Math.floor(i/26):'');
 function kodeSeksi(n){n=(n||'').toLowerCase();
- if(n.includes('sekret'))return'SEKRE';if(n.includes('pemberdaya')||n.includes('pmd'))return'PMD';if(n.includes('pemerintah'))return'PEM';
+ if(n.includes('program')||n.includes('keuangan'))return'PK';if(n.includes('sekret'))return'SEKRE';
+ if(n.includes('pemberdaya')||n.includes('pmd'))return'PMD';if(n.includes('pemerintah'))return'PEM';if(n.includes('pembangunan'))return'BANG';
  if(n.includes('ketentraman')||n.includes('trantib'))return'TRANTIB';if(n.includes('kesejahtera')||n.includes('kesos'))return'KESOS';
- if(n.includes('pelayanan'))return'PELUM';return (n.replace(/seksi|bagian|sub/g,'').trim().split(/\s+/).map(w=>w[0]||'').join('')||'X').toUpperCase()}
+ if(n.includes('pelayanan'))return'PELUM';if(n.includes('umum'))return'UMUM';return (n.replace(/seksi|bagian|sub/g,'').trim().split(/\s+/).map(w=>w[0]||'').join('')||'X').toUpperCase()}
 
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops))return{sops:d.sops,settings:Object.assign({},DEF_SETTINGS,d.settings||{})}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.sops)){const st=Object.assign({},DEF_SETTINGS,d.settings||{});if((st.seksiVer||0)<2){st.seksi=DEF_SETTINGS.seksi.slice();st.seksiVer=2}return{sops:d.sops,settings:st}}}catch(e){}return{sops:[],settings:JSON.parse(JSON.stringify(DEF_SETTINGS))}}
 let DB=load(),cur=null,tab='alir',editingId=null,lastSaved=null,saveT,pvT;
 function save(now){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));lastSaved=new Date();updStatus()}catch(e){toast('Gagal menyimpan — penyimpanan browser penuh. Coba ganti logo dengan gambar lebih kecil.',true)}},now?0:250)}
 function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast'+(err?' err':''),err?6000:2600)}
@@ -550,7 +590,7 @@ const logoSrc=()=>DB.settings.logo||DEF_LOGO;
 const safeName=s=>(s||'SOP').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim().slice(0,80);
 
 function newSop(){const s=DB.settings;return{id:uid(),created:Date.now(),updated:Date.now(),
- meta:{judul:'',unit:s.seksi[1]||s.seksi[0]||'',nomor:'',tglBuat:today(),tglRevisi:'',tglEfektif:'',jabatan:s.jabatan,nama:s.nama,nip:s.nip,
+ meta:{judul:'',unit:s.seksi[0]||'',nomor:'',tglBuat:today(),tglRevisi:'',tglEfektif:'',jabatan:s.jabatan,nama:s.nama,nip:s.nip,
   dasarHukum:DEF_DASAR,kualifikasi:'',keterkaitan:'',peralatan:'Komputer dan Printer\nMeja dan Kursi\nATK dan lain – lain',peringatan:'',pencatatan:''},
  pelaksana:['Pemohon','Staf','Kasi','Camat'],steps:[]}}
 function contohSop(){const s=newSop(),st=(kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket='')=>({id:uid(),kegiatan,tipe,pelaksana,kelengkapan,waktu,output,ket,tidakKe:''});
@@ -741,7 +781,7 @@ $('#btnOpen').onclick=()=>$('#fileOpen').click();
 $('#fileOpen').onchange=e=>{const all=[...e.target.files];e.target.value='';if(!all.length)return;const csv=all.filter(f=>/\.csv$/i.test(f.name)),js=all.filter(f=>!/\.csv$/i.test(f.name));if(csv.length)importCsvFiles(csv);js.forEach(openJsonFile)};
 function openJsonFile(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
  if(d.backup&&Array.isArray(d.sops)){let add=0,rep=0;d.sops.forEach(s=>{const i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){DB.sops[i]=s;rep++}else{DB.sops.push(s);add++}});
-  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
+  if(d.settings&&confirm('Pulihkan juga pengaturan instansi (logo, pengesah, daftar seksi) dari backup?'))DB.settings=Object.assign({},DEF_SETTINGS,d.settings);if((DB.settings.seksiVer||0)<2){DB.settings.seksi=DEF_SETTINGS.seksi.slice();DB.settings.seksiVer=2}save(1);renderHome();applyBrand();toast(`Backup dipulihkan: ${add} SOP baru, ${rep} diperbarui`)}
  else if(d.sop&&d.sop.meta){const s=d.sop,i=DB.sops.findIndex(x=>x.id===s.id);if(i>=0){if(confirm('SOP ini sudah ada. Timpa dengan versi dari file?\n(Batal = simpan sebagai SOP baru)'))DB.sops[i]=s;else{s.id=uid();DB.sops.push(s)}}else DB.sops.push(s);save(1);tab='alir';openSop(s.id);toast('SOP dibuka dari file')}
  else throw 0}catch(_){toast('File "'+f.name+'" tidak dikenali sebagai file SOP',true)}};r.readAsText(f)}
 
@@ -837,6 +877,160 @@ async function importCsvFiles(files){let ok=0,rep=0,bad=[],last=null,askAll=null
  if(daftar){alert('File "Daftar-SOP-…csv" adalah REKAP DAFTAR SOP untuk dibuka di Excel — isinya hanya ringkasan (nomor, judul, tanggal), tanpa langkah bagan alir, jadi tidak bisa diimpor.\n\nUntuk memindahkan data SOP gunakan salah satu:\n• 💾 Backup Semua (file Backup-SOP-…json) — memindahkan SEMUA SOP sekaligus\n• Tombol ⬇ Simpan CSV (format Portal SOP) di dalam masing-masing SOP\n• File CSV dari tombol "Simpan Proyek (.csv)" di Portal SOP');if(!(ok+rep))return}
  toast(bad.length?`${ok+rep} SOP diimpor, ${bad.length} file gagal: ${bad.join(', ')}`:`${ok} SOP baru diimpor${rep?`, ${rep} diperbarui`:''} dari Portal SOP`,bad.length&&!(ok+rep))}
 $('#btnSaveCsv').onclick=()=>{const s=getSop();download('sop-'+safeName(s.meta.judul).toLowerCase().replace(/\s+/g,'-')+'.csv',sopToCsv(s),'text/csv');toast('CSV disimpan — bisa dibuka di Portal SOP')};
+
+/* ===== EKSPOR EXCEL (.xlsx) — ditulis sendiri, tanpa internet ===== */
+const XL=(()=>{
+ const enc=new TextEncoder();
+ const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+ const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+ function zip(files){const parts=[],cd=[];let off=0;const d=new Date();
+  const tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for(const f of files){const nm=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+   const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);
+   h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);parts.push(new Uint8Array(h.buffer),nm,data);
+   const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);
+   c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);cd.push(new Uint8Array(c.buffer),nm);
+   off+=30+nm.length+data.length}
+  const cl=cd.reduce((a,b)=>a+b.length,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cl,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+ const x=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
+ const col=n=>{let s='';n++;while(n){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
+ const ref=(r,c)=>col(c)+(r+1);
+ /* gaya: [font,fill,border,horizontal,vertical,wrap] */
+ const S={def:0,title:1,sub:2,hd:3,td:4,tdc:5,ms:6,pr:7,kp:8,dk:9,lbl:10,link:11,sec:12,note:13,judul:14,tdtop:15,num:16};
+ const XF=[[0,0,0],[2,0,0,'center','center'],[3,0,0,'center','center',1],[1,2,1,'center','center',1],[0,0,1,'left','center',1],[0,0,1,'center','center',1],
+  [4,3,1,'center','center',1],[5,4,1,'center','center',1],[7,5,1,'center','center',1],[1,6,1,'center','center',1],[1,7,1,'left','top',1],[6,0,1,'left','center',1],
+  [4,3,1,'left','center'],[3,0,0,'left','top',1],[1,0,0,'center','center',1],[0,0,1,'left','top',1],[0,0,1,'center','top',1]];
+ const fill=c=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${c}"/><bgColor indexed="64"/></patternFill></fill>`;
+ const font=(b,sz,c,o='')=>`<font>${b?'<b/>':''}${o}<sz val="${sz}"/><color rgb="FF${c}"/><name val="Arial"/></font>`;
+ const STY=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="8">${font(0,10,'16263A')}${font(1,10,'16263A')}${font(1,15,'0B5D8F')}${font(0,10,'5B6B7F','<i/>')}${font(1,10,'FFFFFF')}${font(1,10,'0B5D8F')}${font(0,10,'1683C4','<u/>')}${font(1,10,'BE185D')}</fonts>
+<fills count="9"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${['E4F3FC','0B5D8F','DCEFFB','FDE7F1','F1ECFB','F4F8FC','0B5D8F'].map(fill).join('')}</fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border>${['left','right','top','bottom'].map(s=>`<${s} style="thin"><color rgb="FF5B6B7F"/></${s}>`).join('')}<diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="${XF.length}">${XF.map(([f,fl,b,h,v,w])=>`<xf numFmtId="0" fontId="${f}" fillId="${fl}" borderId="${b}" xfId="0"${f?' applyFont="1"':''}${fl?' applyFill="1"':''}${b?' applyBorder="1"':''}${h?` applyAlignment="1"><alignment horizontal="${h}" vertical="${v}"${w?' wrapText="1"':''}/></xf>`:'/>'}`).join('')}</cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+ class Sheet{constructor(name){this.name=name;this.cells={};this.merges=[];this.cols=[];this.ht={};this.links=[];this.footer='';this.breaks=[];this.titleRows=null}
+  set(r,c,v,s){(this.cells[r]??={})[c]={v,s}}
+  merge(r1,c1,r2,c2,s){if(r1===r2&&c1===c2)return;for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++)if(!(this.cells[r]&&this.cells[r][c]))this.set(r,c,'',s);this.merges.push([r1,c1,r2,c2])}
+  link(r,c,sheet){this.links.push([r,c,sheet])}
+  xml(){const span={},vspan=new Set();this.merges.forEach(([r1,c1,r2,c2])=>{span[r1+':'+c1]=c2;if(r2>r1)for(let r=r1;r<=r2;r++)vspan.add(r)});
+   const W=c=>this.cols[c]||10;
+   const rows=Object.keys(this.cells).map(Number).sort((a,b)=>a-b).map(r=>{const R=this.cells[r];let lines=1;
+    const cs=Object.keys(R).map(Number).sort((a,b)=>a-b).map(c=>{const{v,s}=R[c];
+     if(typeof v==='string'&&v&&!vspan.has(r)&&XF[s]&&XF[s][5]){let w=W(c);const e=span[r+':'+c];if(e!=null)for(let k=c+1;k<=e;k++)w+=W(k);const cpl=Math.max(4,w*0.95);
+      const n=v.split('\n').reduce((a,l)=>a+Math.max(1,Math.ceil(l.length/cpl)),0);if(n>lines)lines=n}
+     return typeof v==='number'?`<c r="${ref(r,c)}" s="${s}"><v>${v}</v></c>`:`<c r="${ref(r,c)}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${x(v)}</t></is></c>`}).join('');
+    const h=this.ht[r]||(lines>1?Math.min(409,lines*13+6):0);return`<row r="${r+1}"${h?` ht="${h}" customHeight="1"`:''}>${cs}</row>`}).join('');
+   const q=n=>"'"+n.replace(/'/g,"''")+"'";
+   return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>
+<cols>${this.cols.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${rows}</sheetData>
+${this.merges.length?`<mergeCells count="${this.merges.length}">${this.merges.map(([a,b,c,d])=>`<mergeCell ref="${ref(a,b)}:${ref(c,d)}"/>`).join('')}</mergeCells>`:''}
+${this.links.length?`<hyperlinks>${this.links.map(([r,c,sh])=>`<hyperlink ref="${ref(r,c)}" location="${x(q(sh))}!A1" display="Buka sheet"/>`).join('')}</hyperlinks>`:''}
+<printOptions horizontalCentered="1"/><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>${this.footer?`<headerFooter><oddFooter>${x(this.footer)}</oddFooter></headerFooter>`:''}${this.breaks.length?`<rowBreaks count="${this.breaks.length}" manualBreakCount="${this.breaks.length}">${this.breaks.map(r=>`<brk id="${r}" max="16383" man="1"/>`).join('')}</rowBreaks>`:''}</worksheet>`}}
+ function book(sheets){const ws=sheets.map((s,i)=>`<sheet name="${x(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('');
+  const files=[{name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`},
+   {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`},
+   {name:'docProps/core.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>SOP ${x(DB.settings.instansi)}</dc:title><dc:creator>SOP-AP Sungai Lala</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`},
+   {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView activeTab="0"/></bookViews><sheets>${ws}</sheets>${sheets.some(s=>s.titleRows)?`<definedNames>${sheets.map((s,i)=>s.titleRows?`<definedName name="_xlnm.Print_Titles" localSheetId="${i}">${x("'"+s.name.replace(/'/g,"''")+"'")}!$${s.titleRows[0]}:$${s.titleRows[1]}</definedName>`:'').join('')}</definedNames>`:''}</workbook>`},
+   {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:STY}].concat(sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:s.xml()})));
+  return zip(files)}
+ return{S,Sheet,book}})();
+
+function xlSheetName(base,used){let n=String(base).replace(/[\[\]:*?\/\\]/g,'').replace(/\s+/g,' ').trim()||'SOP',k=2;if(n.length>31)n=n.slice(0,30).trim()+'…';
+ while(used.has(n.toLowerCase())){const suf=` (${k++})`;n=n.slice(0,31-suf.length)+suf}used.add(n.toLowerCase());return n}
+const xlNum=t=>lines(t).map((v,i)=>`${i+1}. ${v}`).join('\n')||'-';
+const xlFooter=()=>`&R&8SOP-${DB.settings.instansi} · Halaman &P dari &N`;
+
+function xlSopSheet(s,name){const S=XL.S,sh=new XL.Sheet(name),m=s.meta,P=s.pelaksana.length?s.pelaksana:['Pelaksana'],n=P.length,last=n+5;
+ sh.cols=[5,38,...P.map(()=>13),20,11,20,24];sh.footer=xlFooter();let r=0;
+ const line=(v,st,h)=>{sh.set(r,0,v,st);sh.merge(r,0,r,last,st);if(h)sh.ht[r]=h;r++};
+ const kv=(k,v)=>{sh.set(r,0,k,S.lbl);sh.merge(r,0,r,1,S.lbl);sh.set(r,2,v||'-',S.tdtop);sh.merge(r,2,r,last,S.tdtop);r++};
+ line('STANDAR OPERASIONAL PROSEDUR ADMINISTRASI PEMERINTAHAN',S.title,24);
+ line(m.judul||'(Judul SOP)',S.judul,20);
+ line(`${DB.settings.instansi} · ${m.unit||'-'} · ${DB.settings.kabupaten}`,S.sub);r++;
+ line('  LEMBAR IDENTITAS SOP',S.sec,18);
+ kv('Nomor SOP',m.nomor);kv('Unit / Seksi',m.unit);kv('Tanggal Pembuatan',fmtTgl(m.tglBuat));kv('Tanggal Revisi',fmtTgl(m.tglRevisi));kv('Tanggal Efektif',fmtTgl(m.tglEfektif));
+ kv('Disahkan oleh',`${m.jabatan||''}\n\n\n${m.nama||''}\nNIP ${m.nip||''}`);kv('Judul SOP',m.judul);
+ kv('Dasar Hukum',xlNum(m.dasarHukum));kv('Kualifikasi Pelaksana',xlNum(m.kualifikasi));kv('Keterkaitan',xlNum(m.keterkaitan));kv('Peralatan / Perlengkapan',xlNum(m.peralatan));
+ kv('Peringatan',lines(m.peringatan).join('\n'));kv('Pencatatan dan Pendataan',lines(m.pencatatan).join('\n'));r++;
+ sh.breaks.push(r);line('  BAGAN ALIR SOP',S.sec,18);
+ const a=r,b=r+1;sh.titleRows=[a+1,b+1];
+ sh.set(a,0,'No',S.hd);sh.merge(a,0,b,0,S.hd);sh.set(a,1,'Kegiatan',S.hd);sh.merge(a,1,b,1,S.hd);
+ sh.set(a,2,'Pelaksana',S.hd);sh.merge(a,2,a,n+1,S.hd);P.forEach((p,i)=>sh.set(b,2+i,p,S.hd));
+ sh.set(a,n+2,'Mutu Baku',S.hd);sh.merge(a,n+2,a,n+4,S.hd);['Kelengkapan','Waktu','Output'].forEach((v,i)=>sh.set(b,n+2+i,v,S.hd));
+ sh.set(a,n+5,'Ket',S.hd);sh.merge(a,n+5,b,n+5,S.hd);sh.ht[a]=18;sh.ht[b]=30;r+=2;
+ const ST={mulai:S.ms,selesai:S.ms,keputusan:S.kp,dokumen:S.dk,proses:S.pr};
+ s.steps.forEach((st,i)=>{const all=[st.pelaksana,...(st.bersama||[])],t=st.tidakKe?s.steps.findIndex(y=>y.id===st.tidakKe):-1;
+  const lab=st.tipe==='mulai'?'Mulai':st.tipe==='selesai'?'Selesai':st.tipe==='keputusan'?`◇ ${i+1}`+(t>=0?`\nTidak → ${t+1}`:''):st.tipe==='dokumen'?`▱ ${i+1}`:`▭ ${i+1}`;
+  sh.set(r,0,i+1,S.tdc);sh.set(r,1,st.kegiatan,S.td);P.forEach((p,j)=>sh.set(r,2+j,all.includes(p)?lab:'',all.includes(p)?ST[st.tipe]||S.pr:S.tdc));
+  sh.set(r,n+2,st.kelengkapan,S.tdc);sh.set(r,n+3,st.waktu,S.tdc);sh.set(r,n+4,st.output,S.tdc);sh.set(r,n+5,st.ket,S.tdc);
+  if(!sh.ht[r])sh.ht[r]=0;r++});
+ if(!s.steps.length){sh.set(r,0,'Belum ada langkah kegiatan.',S.tdc);sh.merge(r,0,r,last,S.tdc);r++}
+ r++;sh.set(r,0,'Keterangan simbol: Mulai / Selesai (biru tua) · ▭ Proses (biru muda) · ◇ Keputusan (pink) — Ya: lanjut ke langkah berikutnya, Tidak: kembali ke langkah yang disebut · ▱ Dokumen (ungu) · Simbol bernomor sama di beberapa kolom = kegiatan dikerjakan bersama. Bagan alir lengkap dengan garis penghubung tersedia pada versi PDF.',S.note);
+ sh.merge(r,0,r,last,S.note);sh.ht[r]=30;
+ return sh}
+
+function xlPustaka(list,names){const S=XL.S,sh=new XL.Sheet('Pustaka');sh.cols=[5,26,46,30,15,15,15,10,10];sh.footer=xlFooter();const last=8;let r=0;
+ const line=(v,st,h)=>{sh.set(r,0,v,st);sh.merge(r,0,r,last,st);if(h)sh.ht[r]=h;r++};
+ line('PUSTAKA STANDAR OPERASIONAL PROSEDUR',S.title,24);
+ line(`${DB.settings.instansi} · ${DB.settings.kabupaten}`,S.judul,18);
+ line(`Diekspor dari SOP-AP Sungai Lala pada ${fmtTgl(today())} · ${list.length} SOP · klik judul untuk membuka sheet SOP`,S.sub);r++;
+ line('  A. DAFTAR SOP',S.sec,18);
+ ['No','Nomor SOP','Judul SOP','Unit / Seksi','Tgl Pembuatan','Tgl Revisi','Tgl Efektif','Langkah','Status'].forEach((v,i)=>sh.set(r,i,v,S.hd));sh.ht[r]=20;r++;
+ list.forEach((s,i)=>{const m=s.meta;[i+1,m.nomor||'-',m.judul||'(SOP tanpa judul)',m.unit||'-',fmtTgl(m.tglBuat),fmtTgl(m.tglRevisi),fmtTgl(m.tglEfektif),s.steps.length,m.tglEfektif?'Efektif':'Draf']
+  .forEach((v,c)=>sh.set(r,c,v,c===2?S.link:(c===1||c===3)?S.td:S.tdc));sh.link(r,2,names[i]);r++});
+ const per={};list.forEach(s=>{const u=s.meta.unit||'-';per[u]=(per[u]||0)+1});r++;
+ line('  B. REKAP PER UNIT / SEKSI',S.sec,18);
+ sh.set(r,0,'No',S.hd);sh.set(r,1,'Unit / Seksi',S.hd);sh.merge(r,1,r,3,S.hd);sh.set(r,4,'Jumlah SOP',S.hd);r++;
+ Object.entries(per).forEach(([u,k],i)=>{sh.set(r,0,i+1,S.tdc);sh.set(r,1,u,S.td);sh.merge(r,1,r,3,S.td);sh.set(r,4,k,S.tdc);r++});
+ const reg=new Map();list.forEach(s=>lines(s.meta.dasarHukum).forEach(d=>{const k=d.toLowerCase().replace(/\s+/g,' ').replace(/[.\s]+$/,'');if(!reg.has(k))reg.set(k,{t:d.replace(/\s+/g,' '),u:new Set()});reg.get(k).u.add(s.meta.nomor||s.meta.judul||'-')}));r++;
+ line('  C. DAFTAR PUSTAKA (DASAR HUKUM)',S.sec,18);
+ sh.set(r,0,'No',S.hd);sh.set(r,1,'Peraturan / Dasar Hukum',S.hd);sh.merge(r,1,r,5,S.hd);sh.set(r,6,'Digunakan pada SOP',S.hd);sh.merge(r,6,r,8,S.hd);r++;
+ if(!reg.size){sh.set(r,0,'Belum ada dasar hukum.',S.tdc);sh.merge(r,0,r,last,S.tdc);r++}
+ [...reg.values()].forEach((v,i)=>{sh.set(r,0,i+1,S.num);sh.set(r,1,v.t,S.tdtop);sh.merge(r,1,r,5,S.tdtop);sh.set(r,6,[...v.u].join('\n'),S.tdtop);sh.merge(r,6,r,8,S.tdtop);r++});
+ return sh}
+
+function exportExcel(list,fname){if(!list.length)return toast('Pilih minimal satu SOP',true);
+ const used=new Set(['pustaka']),names=list.map((s,i)=>xlSheetName(`${i+1}. ${s.meta.judul||'SOP tanpa judul'}`,used));
+ const sheets=[xlPustaka(list,names),...list.map((s,i)=>xlSopSheet(s,names[i]))];
+ const blob=XL.book(sheets),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
+ toast(`Excel disimpan: ${list.length} SOP + sheet Pustaka`)}
+
+/* ===== Cetak / Ekspor Banyak ===== */
+let bSel=new Set();
+function bFiltered(){const q=$('#bQ').value.toLowerCase(),f=$('#bSeksi').value;return [...DB.sops].sort((a,b)=>(a.meta.unit||'').localeCompare(b.meta.unit||'')||(a.meta.nomor||'').localeCompare(b.meta.nomor||'',undefined,{numeric:true})).filter(s=>(!f||s.meta.unit===f)&&(!q||(s.meta.judul+' '+s.meta.nomor).toLowerCase().includes(q)))}
+function renderBulk(){const L=bFiltered();
+ $('#bList').innerHTML=L.length?L.map(s=>`<label><input type="checkbox" value="${s.id}"${bSel.has(s.id)?' checked':''}><span><div class="bn">${esc(s.meta.nomor||'Nomor belum diisi')} · ${esc(s.meta.unit||'-')}</div><div>${esc(s.meta.judul||'(SOP tanpa judul)')}</div></span></label>`).join(''):'<div class="empty" style="margin:12px">Tidak ada SOP yang cocok.</div>';
+ const n=bSel.size;$('#bCount').textContent=`${n} SOP dipilih dari ${DB.sops.length}`;
+ const x=document.querySelector('input[name=bFmt]:checked').value==='xlsx';$('#bGo').textContent=x?`📊 Unduh Excel (${n} SOP)`:`🖨 Cetak PDF (${n} SOP)`}
+$('#btnBulk').onclick=()=>{if(!DB.sops.length)return toast('Belum ada SOP',true);const st=DB.settings;
+ $('#bSeksi').innerHTML='<option value="">Semua Unit / Seksi</option>'+[...new Set([...st.seksi,...DB.sops.map(s=>s.meta.unit).filter(Boolean)])].map(s=>`<option>${esc(s)}</option>`).join('');
+ $('#bQ').value='';bSel=new Set(DB.sops.map(s=>s.id));renderBulk();$('#mBulk').classList.remove('hidden')};
+$('#bQ').oninput=renderBulk;$('#bSeksi').onchange=renderBulk;
+$('#bList').onchange=e=>{const c=e.target;if(c.type!=='checkbox')return;c.checked?bSel.add(c.value):bSel.delete(c.value);renderBulk()};
+$('#bAll').onclick=()=>{bFiltered().forEach(s=>bSel.add(s.id));renderBulk()};
+$('#bNone').onclick=()=>{bFiltered().forEach(s=>bSel.delete(s.id));renderBulk()};
+$$('input[name=bFmt]').forEach(r=>r.onchange=renderBulk);
+$('#bCancel').onclick=()=>$('#mBulk').classList.add('hidden');
+$('#mBulk').onclick=e=>{if(e.target.id==='mBulk')$('#mBulk').classList.add('hidden')};
+$('#bGo').onclick=()=>{const list=[...DB.sops].filter(s=>bSel.has(s.id)).sort((a,b)=>(a.meta.unit||'').localeCompare(b.meta.unit||'')||(a.meta.nomor||'').localeCompare(b.meta.nomor||'',undefined,{numeric:true}));
+ if(!list.length)return toast('Centang minimal satu SOP',true);
+ $('#mBulk').classList.add('hidden');
+ if(document.querySelector('input[name=bFmt]:checked').value==='xlsx'){exportExcel(list,`SOP-${safeName(DB.settings.instansi).replace(/\s+/g,'-')}-${today()}.xlsx`);return}
+ const o={ident:$('#bIdent').checked,alir:$('#bAlir').checked,per:0,legend:true};if(!o.ident&&!o.alir)return toast('Pilih Lembar Identitas dan/atau Bagan Alir',true);
+ printMany(list,o)};
+function printMany(list,o){const P=$('#printArea');P.innerHTML=list.map(()=>'<div class="docset"></div>').join('');
+ [...P.children].forEach((d,i)=>renderDoc(d,list[i],o));const old=document.title;document.title=`SOP ${DB.settings.instansi} (${list.length} SOP)`;
+ setTimeout(()=>{window.print();document.title=old},200)}
+$('#btnXls').onclick=$('#btnXls2').onclick=()=>{const s=getSop();if(s)exportExcel([s],'SOP-'+safeName(s.meta.judul).replace(/\s+/g,'-')+'.xlsx')};
 
 /* settings */
 let tmpLogo='';
